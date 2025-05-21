@@ -65,7 +65,8 @@ const deleteLesson = async (req, res) => {
 // Get all lessons (Teacher & Student)
 const getAllLessons = async (req, res) => {
   try {
-    const lessons = await lessonService.getAllLessons();
+    const { category } = req.query; // 'free' or 'premium'
+    const lessons = await lessonService.getAllLessons(category);
     res.json(lessons);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -85,6 +86,8 @@ const getLessonById = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 module.exports = {
   uploadLesson,

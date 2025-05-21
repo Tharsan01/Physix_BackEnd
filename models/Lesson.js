@@ -4,7 +4,8 @@ const lessonSchema = new mongoose.Schema({
   title: { type: String, required: true },
   videoUrl: { type: String, required: true },
   thumbnailUrl: { type: String }, // optional
-  videoType: { type: String, enum: ['free', 'premium'], default: 'free' },
+  isPremium: {type: Boolean,default: false // false = free, true = premium
+  },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // required teacher ID
 }, { timestamps: true });
 

@@ -1,22 +1,29 @@
 const Lesson = require('../models/Lesson');
 
-const createLesson = async (data) => await new Lesson(data).save();
-
-const updateLesson = async (id, data) => {
-  data.updatedAt = Date.now();
-  return await Lesson.findByIdAndUpdate(id, data, { new: true });
+const createLesson = async (lessonData) => {
+  return await Lesson.create(lessonData);
 };
 
-const deleteLesson = async (id) => await Lesson.findByIdAndDelete(id);
+const findById = async (id) => {
+  return await Lesson.findById(id).populate('createdBy', 'name');
+};
 
-const findById = async (id) => await Lesson.findById(id);
+const updateLesson = async (id, updatedData) => {
+  return await Lesson.findByIdAndUpdate(id, updatedData, { new: true });
+};
 
-const findAll = async () => await Lesson.find().sort({ createdAt: -1 });
+const deleteLesson = async (id) => {
+  return await Lesson.findByIdAndDelete(id);
+};
+
+const findAll = async (filter = {}) => {
+  return await Lesson.find(filter).populate('createdBy', 'name');
+};
 
 module.exports = {
   createLesson,
+  findById,
   updateLesson,
   deleteLesson,
-  findById,
   findAll
 };

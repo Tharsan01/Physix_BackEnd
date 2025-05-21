@@ -7,7 +7,7 @@ const uploadLesson = async (teacherId, { title, videoUrl, thumbnailUrl, videoTyp
     videoUrl,
     thumbnailUrl,
     videoType,
-    createdBy: teacherId  // Use 'createdBy' to match your schema
+    createdBy: teacherId
   });
 
   return toLessonDTO(lesson);
@@ -35,8 +35,16 @@ const deleteLesson = async (lessonId, teacherId) => {
   return { message: 'Lesson deleted successfully' };
 };
 
-const getAllLessons = async () => {
-  const lessons = await lessonRepository.findAll();
+const getAllLessons = async (category) => {
+  let filter = {};
+
+  if (category === 'free') {
+    filter.videoType = 'free';
+  } else if (category === 'premium') {
+    filter.videoType = 'premium';
+  }
+
+  const lessons = await lessonRepository.findAll(filter);
   return lessons.map(toLessonDTO);
 };
 
