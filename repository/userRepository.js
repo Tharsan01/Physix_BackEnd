@@ -15,7 +15,7 @@ const createUser = async (data) => {
 const findByResetToken = async (token) => {
   return await User.findOne({
     resetPasswordToken: token,
-    resetPasswordExpires: { $gt: Date.now() } // Valid only if not expired
+    resetPasswordExpires: { $gt: Date.now() }
   });
 };
 
