@@ -16,7 +16,10 @@ const uploadLesson = async (teacherId, { title, videoUrl, thumbnailUrl, videoTyp
 const updateLesson = async (lessonId, teacherId, updatedData) => {
   const existingLesson = await lessonRepository.findById(lessonId);
   if (!existingLesson) throw new Error('Lesson not found');
-  if (existingLesson.createdBy.toString() !== teacherId.toString()) {
+
+  // ✅ Fix: use createdBy._id for populated lesson
+  const creatorId = existingLesson.createdBy._id || existingLesson.createdBy;
+  if (creatorId.toString() !== teacherId.toString()) {
     throw new Error('You are not authorized to edit this lesson');
   }
 
@@ -27,7 +30,10 @@ const updateLesson = async (lessonId, teacherId, updatedData) => {
 const deleteLesson = async (lessonId, teacherId) => {
   const lesson = await lessonRepository.findById(lessonId);
   if (!lesson) throw new Error('Lesson not found');
-  if (lesson.createdBy.toString() !== teacherId.toString()) {
+
+  // ✅ Fix: use createdBy._id for populated lesson
+  const creatorId = lesson.createdBy._id || lesson.createdBy;
+  if (creatorId.toString() !== teacherId.toString()) {
     throw new Error('You are not authorized to delete this lesson');
   }
 
