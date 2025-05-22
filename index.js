@@ -15,7 +15,8 @@ const userRoutes = require('./routes/userRoutes');
 app.use('/api/users', userRoutes);
 const lessonRoutes = require('./routes/lessonRoutes');
 app.use('/api/lessons', lessonRoutes);
-
+const certificateRoutes = require('./routes/certificateRoutes');
+app.use('/api/certificates', certificateRoutes);
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
