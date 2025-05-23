@@ -4,11 +4,14 @@ function toUserDTO(user) {
     userName: user.userName,
     email: user.email,
     phone: user.phone,
-    classId: user.classId,
+    address: user.address || '',
+    subject: user.subject || '',
+    classId: user.classId || '',
+    qualifications: user.qualifications || '',
+    subjectSelection: user.subjectSelection || [],
     role: user.role,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
-    deletedAt: user.deletedAt,
+    emailVerified: user.emailVerified,
+    createdDate: user.createdAt, 
   };
 }
 
