@@ -1,6 +1,5 @@
 const userService = require('../services/userService');
 
-    const { user, message } = await userService.registerUser(req.body);
 // GET: Fetch user profile
 const getProfile = async (req, res) => {
   try {
