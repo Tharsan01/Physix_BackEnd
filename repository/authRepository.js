@@ -8,6 +8,10 @@ const findByUserName = async (userName) => {
   return await User.findOne({ userName });
 };
 
+const findByFullName = async (fullName) => {
+  return await User.findOne({ fullName });
+};
+
 const createUser = async (data) => {
   return await new User(data).save();
 };
@@ -15,7 +19,7 @@ const createUser = async (data) => {
 const findByResetToken = async (token) => {
   return await User.findOne({
     resetPasswordToken: token,
-    resetPasswordExpires: { $gt: Date.now() }
+    resetPasswordExpires: { $gt: Date.now() },
   });
 };
 
@@ -28,17 +32,17 @@ const updatePassword = async (userId, newPassword) => {
   return await user.save();
 };
 
-// Find user by email verification token (for OTP verification)
 const findByVerificationToken = async (token) => {
   return await User.findOne({
     emailVerificationToken: token,
-    emailVerificationExpires: { $gt: Date.now() }
+    emailVerificationExpires: { $gt: Date.now() },
   });
 };
 
 module.exports = {
   findByEmail,
   findByUserName,
+  findByFullName,
   createUser,
   findByResetToken,
   updatePassword,

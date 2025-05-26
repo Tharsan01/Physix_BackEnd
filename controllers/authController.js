@@ -17,7 +17,7 @@ const register = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    const { user, token } = await userService.loginUser(req.body);
+    const { user, token } = await userService.loginUser(req.body); // expects userName, password in body
     res.status(200).json({ user, token });
   } catch (err) {
     res.status(401).json({ error: err.message });

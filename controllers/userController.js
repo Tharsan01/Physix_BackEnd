@@ -1,23 +1,27 @@
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const User = require('../models/User');
 const userService = require('../services/userService');
 
-// GET: Fetch user profile
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+
+// GET profile for logged-in user (student or teacher)
 const getProfile = async (req, res) => {
   try {
-    const userId = req.user.id; // set by auth middleware
+    const userId = req.user.id;
     const profile = await userService.getUserProfile(userId);
-    res.json(profile); // already returns DTO including createdDate
+    res.json(profile);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// PUT: Update user profile
+// UPDATE profile (student or teacher)
 const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
     const updatedData = req.body;
 
-    // Ensure required fields aren't removed
     if (!updatedData.userName || !updatedData.email || !updatedData.phone) {
       return res.status(400).json({ error: 'userName, email, and phone are required.' });
     }
@@ -28,14 +32,36 @@ const updateProfile = async (req, res) => {
       message: updatedData.email
         ? 'Profile updated. Please verify your new email.'
         : 'Profile updated.',
-      user: updatedUser, // returned as DTO with createdDate
+      user: updatedUser,
     });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// DELETE: Permanently delete user profile
+// UPLOAD or EDIT teacher-specific profile fields (only for teachers)
+const uploadOrEditTeacherProfile = async (req, res) => {
+  try {
+    if (req.user.role !== 'teacher') {
+      return res.status(403).json({ error: 'Access denied: only teachers allowed' });
+    }
+
+    const profileData = req.body;
+    const allowedFields = ['qualifications', 'subjectSelection', 'address', 'subject', 'phone'];
+    const updateData = {};
+
+    allowedFields.forEach(field => {
+      if (profileData[field] !== undefined) updateData[field] = profileData[field];
+    });
+
+    const updatedTeacher = await userService.updateUserProfile(req.user.id, updateData);
+    res.json({ message: 'Teacher profile uploaded/updated successfully.', teacher: updatedTeacher });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// DELETE profile (student or teacher)
 const deleteProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -47,7 +73,9 @@ const deleteProfile = async (req, res) => {
 };
 
 module.exports = {
+  
   getProfile,
   updateProfile,
+  uploadOrEditTeacherProfile,
   deleteProfile,
 };
