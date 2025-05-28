@@ -20,12 +20,16 @@ const lessonRoutes = require('./routes/lessonRoutes');
 const certificateRoutes = require('./routes/certificateRoutes');
 const authRoutes = require('./routes/authRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const inquiryRoutes = require('./routes/inquiryRoutes');
+const noticeRoutes = require('./routes/noticeRoutes');
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/certificate',restrictTo('Teacher') ,certificateRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/reviews',reviewRoutes);
+app.use('/api/inquiries', authenticate, inquiryRoutes);
+app.use('/api/notices', noticeRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');
