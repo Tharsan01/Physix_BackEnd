@@ -51,9 +51,12 @@ const deleteProfile = async (req, res) => {
 const uploadOrEditTeacherProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    const updatedData = req.body;
+    const updatedData = { ...req.body };
 
-    // Since this is teacher route, pass role 'teacher' explicitly
+    // Optionally, you can ensure the role is teacher to avoid accidental changes
+    updatedData.role = 'teacher';
+
+    // Now update the profile with imageUrl included in updatedData (if provided)
     const updatedTeacher = await userService.updateUserProfile(userId, updatedData, 'teacher');
 
     res.status(200).json({
@@ -64,6 +67,7 @@ const uploadOrEditTeacherProfile = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 module.exports = {
   getProfile,

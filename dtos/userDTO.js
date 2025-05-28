@@ -9,6 +9,7 @@ function toUserDTO(user) {
     classId: user.classId || '',
     qualifications: user.qualifications || '',
     subjectSelection: user.subjectSelection || [],
+    imageUrl: user.imageUrl || null,
     role: user.role,
     emailVerified: user.emailVerified,
     createdDate: user.createdAt, 

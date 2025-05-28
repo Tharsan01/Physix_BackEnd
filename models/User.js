@@ -10,7 +10,9 @@ const userSchema = new mongoose.Schema({
   subject: { type: String },                        
   classId: { type: String },                        
   qualifications: { type: String },                 
-  subjectSelection: [{ type: String }],             
+  subjectSelection: [{ type: String }],
+  imageUrl: { type: String },
+             
 
   password: { type: String, required: true },
   role: { type: String, enum: ['student', 'teacher'], default: 'student' },
