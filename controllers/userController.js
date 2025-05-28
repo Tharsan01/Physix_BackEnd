@@ -53,10 +53,15 @@ const uploadOrEditTeacherProfile = async (req, res) => {
     const userId = req.user.id;
     const updatedData = { ...req.body };
 
-    // Optionally, you can ensure the role is teacher to avoid accidental changes
+    // Explicitly set role as 'teacher' to ensure consistency
     updatedData.role = 'teacher';
 
-    // Now update the profile with imageUrl included in updatedData (if provided)
+    // Only allow password update if provided and non-empty
+    if (!updatedData.password || updatedData.password.trim() === '') {
+      delete updatedData.password;
+    }
+
+    // Update the teacher's profile using service method
     const updatedTeacher = await userService.updateUserProfile(userId, updatedData, 'teacher');
 
     res.status(200).json({

@@ -19,9 +19,9 @@ const updateUserProfile = async (userId, updatedData, userRole = 'user') => {
   const existingUser = await userRepository.findById(userId);
   if (!existingUser) throw new Error('User not found');
 
-  // If user is NOT a teacher and email changed, trigger OTP email verification
+  // For students: trigger OTP if email is changed
   if (
-    userRole !== 'teacher' && // only for non-teachers
+    userRole !== 'teacher' &&
     updatedData.email &&
     updatedData.email !== existingUser.email
   ) {
@@ -29,26 +29,28 @@ const updateUserProfile = async (userId, updatedData, userRole = 'user') => {
     const otp = generateOTP();
     updatedData.emailOTP = otp;
     updatedData.emailOTPExpires = new Date(Date.now() + 10 * 60 * 1000);
+
     try {
       await sendOTPEmail(updatedData.email, otp);
     } catch (err) {
       console.error('Failed to send OTP email:', err);
-      // Decide whether to throw or continue
-      // throw new Error('Failed to send OTP email');
     }
   }
 
-  // If password updated, hash it manually
-  if (updatedData.password) {
+  // Only hash password if it exists and is not empty
+  if (updatedData.password && updatedData.password.trim() !== '') {
     updatedData.password = await bcrypt.hash(updatedData.password, 10);
+  } else {
+    delete updatedData.password; // Prevent blank password overwriting
   }
 
-  // Apply updates to the existing user document and save to trigger pre-save hooks
+  // Merge updates and save
   Object.assign(existingUser, updatedData);
   const savedUser = await existingUser.save();
 
   return toUserDTO(savedUser);
 };
+;
 
 const deleteUser = async (userId) => {
   const deletedUser = await userRepository.deleteById(userId);
