@@ -29,9 +29,9 @@ const restrictTo = (...roles) => {
     }
 
     const userRole = req.user.role.toLowerCase();
-    const allowed = roles.map(role => role.toLowerCase());
+    const allowedRoles = roles.map(role => role.toLowerCase());
 
-    if (!allowed.includes(userRole)) {
+    if (!allowedRoles.includes(userRole)) {
       return res.status(403).json({ message: 'Forbidden: You do not have permission to perform this action' });
     }
 
