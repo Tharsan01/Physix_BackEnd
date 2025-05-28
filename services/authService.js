@@ -37,14 +37,15 @@ const generateToken = (user) => {
 };
 
 // Register user (role = student)
-const registerUser = async ({ fullName, email, password, classId, phone }) => {
+const registerUser = async ({ userName, email, password, classId, phone }) => {
   const existingUser = await userRepository.findByEmail(email);
   if (existingUser) throw new Error('User already exists');
 
   const role = 'student';
 
+  // Create new user object but do NOT save yet
   const newUser = await userRepository.createUser({
-    fullName,
+    userName,
     email,
     password,
     classId,
@@ -52,12 +53,16 @@ const registerUser = async ({ fullName, email, password, classId, phone }) => {
     role,
   });
 
+  // Generate OTP and set verification fields
   const otp = generateOTP();
   newUser.emailOTP = otp;
-  newUser.emailOTPExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+  newUser.emailOTPExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
   newUser.emailVerified = false;
+
+  // Save the new user with OTP fields set
   await newUser.save();
 
+  // Send OTP email
   await sendOTPEmail(email, otp);
 
   return {
@@ -83,10 +88,9 @@ const verifyEmailOTP = async (email, otp) => {
   return { message: 'Email successfully verified.' };
 };
 
-// Login user (by fullName and password)
 // Login user (by userName and password)
 const loginUser = async ({ userName, password }) => {
-  const user = await userRepository.findByUserName(userName); // Use userName, not fullName
+  const user = await userRepository.findByUserName(userName);
   if (!user) throw new Error('User not found');
   if (!user.emailVerified) throw new Error('Please verify your email before logging in.');
 
@@ -96,7 +100,6 @@ const loginUser = async ({ userName, password }) => {
   const token = generateToken(user);
   return { user: toUserDTO(user), token };
 };
-
 
 // Send password reset email
 const sendResetPasswordEmail = async (email, token) => {
@@ -123,7 +126,7 @@ const forgotPassword = async (email) => {
 
   const resetToken = crypto.randomBytes(32).toString('hex');
   user.resetPasswordToken = resetToken;
-  user.resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 hour
+  user.resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 hour expiry
   await user.save();
 
   await sendResetPasswordEmail(email, resetToken);

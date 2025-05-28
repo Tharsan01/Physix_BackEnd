@@ -1,67 +1,42 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const User = require('../models/User');
 const userService = require('../services/userService');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
-
-// GET profile for logged-in user (student or teacher)
+// GET: Fetch user profile
 const getProfile = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.id; // set by auth middleware
     const profile = await userService.getUserProfile(userId);
-    res.json(profile);
+    res.json(profile); // already returns DTO including createdDate
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// UPDATE profile (student or teacher)
+// PUT: Update user profile
 const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
     const updatedData = req.body;
 
+    // Ensure required fields aren't removed
     if (!updatedData.userName || !updatedData.email || !updatedData.phone) {
       return res.status(400).json({ error: 'userName, email, and phone are required.' });
     }
 
-    const updatedUser = await userService.updateUserProfile(userId, updatedData);
+    // Pass user's role to service so it can decide OTP logic
+    const userRole = req.user.role || 'user';
+
+    const updatedUser = await userService.updateUserProfile(userId, updatedData, userRole);
 
     res.json({
-      message: updatedData.email
-        ? 'Profile updated. Please verify your new email.'
-        : 'Profile updated.',
-      user: updatedUser,
+      message: 'Profile updated.',
+      user: updatedUser, // returned as DTO with createdDate
     });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// UPLOAD or EDIT teacher-specific profile fields (only for teachers)
-const uploadOrEditTeacherProfile = async (req, res) => {
-  try {
-    if (req.user.role !== 'teacher') {
-      return res.status(403).json({ error: 'Access denied: only teachers allowed' });
-    }
-
-    const profileData = req.body;
-    const allowedFields = ['qualifications', 'subjectSelection', 'address', 'subject', 'phone'];
-    const updateData = {};
-
-    allowedFields.forEach(field => {
-      if (profileData[field] !== undefined) updateData[field] = profileData[field];
-    });
-
-    const updatedTeacher = await userService.updateUserProfile(req.user.id, updateData);
-    res.json({ message: 'Teacher profile uploaded/updated successfully.', teacher: updatedTeacher });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-// DELETE profile (student or teacher)
+// DELETE: Permanently delete user profile
 const deleteProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -72,10 +47,27 @@ const deleteProfile = async (req, res) => {
   }
 };
 
+// POST: Upload or edit teacher profile (teacher-specific fields)
+const uploadOrEditTeacherProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const updatedData = req.body;
+
+    // Since this is teacher route, pass role 'teacher' explicitly
+    const updatedTeacher = await userService.updateUserProfile(userId, updatedData, 'teacher');
+
+    res.status(200).json({
+      message: 'Teacher profile updated successfully.',
+      user: updatedTeacher,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
-  
   getProfile,
   updateProfile,
-  uploadOrEditTeacherProfile,
   deleteProfile,
+  uploadOrEditTeacherProfile,
 };

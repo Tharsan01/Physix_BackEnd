@@ -11,6 +11,7 @@ router.put('/update', authenticate, userController.updateProfile);
 router.delete('/delete', authenticate, userController.deleteProfile);
 
 // Teacher-specific route for uploading/editing teacher profile fields
-router.post('/teacher/upload', authenticate, restrictTo, userController.uploadOrEditTeacherProfile);
+router.post('/teacher/upload', authenticate, userController.uploadOrEditTeacherProfile);
+
 
 module.exports = router;
