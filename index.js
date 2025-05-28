@@ -6,6 +6,7 @@ const { authenticate, restrictTo } = require('./middleware/authMiddleware');
 
 dotenv.config();
 
+
 connectDB();
 
 const app = express();
