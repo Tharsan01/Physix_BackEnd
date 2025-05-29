@@ -37,12 +37,12 @@ const updateUserProfile = async (userId, updatedData, userRole = 'user') => {
     }
   }
 
-  // Only hash password if it exists and is not empty
-  if (updatedData.password && updatedData.password.trim() !== '') {
-    updatedData.password = await bcrypt.hash(updatedData.password, 10);
-  } else {
-    delete updatedData.password; // Prevent blank password overwriting
-  }
+  // // Only hash password if it exists and is not empty
+  // if (updatedData.password && updatedData.password.trim() !== '') {
+  //   updatedData.password = await bcrypt.hash(updatedData.password, 10);
+  // } else {
+  //   delete updatedData.password; // Prevent blank password overwriting
+  // }
 
   // Merge updates and save
   Object.assign(existingUser, updatedData);
