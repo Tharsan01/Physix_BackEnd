@@ -1,3 +1,4 @@
+
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
@@ -5,7 +6,6 @@ const connectDB = require('./config/db');
 const { authenticate, restrictTo } = require('./middleware/authMiddleware');
 
 dotenv.config();
-
 
 connectDB();
 
@@ -22,14 +22,17 @@ const authRoutes = require('./routes/authRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const inquiryRoutes = require('./routes/inquiryRoutes');
 const noticeRoutes = require('./routes/noticeRoutes');
+const classRoutes = require('./routes/classRoutes');
+
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/lessons', lessonRoutes);
-app.use('/api/certificate',restrictTo('Teacher') ,certificateRoutes);
+app.use('/api/certificate', restrictTo('Teacher'), certificateRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/reviews',reviewRoutes);
+app.use('/api/reviews', reviewRoutes);
 app.use('/api/inquiries', authenticate, inquiryRoutes);
 app.use('/api/notices', noticeRoutes);
+app.use('/api/classes', classRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');
