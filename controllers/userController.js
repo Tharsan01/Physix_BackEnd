@@ -72,6 +72,17 @@ const uploadOrEditTeacherProfile = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+const getTeacherCurrentPassword = async (req, res) => {
+  try {
+    const teacher = await userService.getTeacherData();
+    res.status(200).json({
+      userName: teacher.userName,
+      hashedPassword: teacher.password,
+    });
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+};
 
 
 module.exports = {
@@ -79,4 +90,5 @@ module.exports = {
   updateProfile,
   deleteProfile,
   uploadOrEditTeacherProfile,
+  getTeacherCurrentPassword
 };

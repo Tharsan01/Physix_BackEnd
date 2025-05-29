@@ -14,9 +14,14 @@ const updateById = async (id, data) => {
 const deleteById = async (id) => {
   return await User.findByIdAndDelete(id);
 };
+const findTeacher = async () => {
+  return await User.findOne({ role: 'teacher' });
+};
+
 
 module.exports = {
   findById,
   updateById,
   deleteById,
+  findTeacher
 };

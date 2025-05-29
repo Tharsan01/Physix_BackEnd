@@ -57,9 +57,14 @@ const deleteUser = async (userId) => {
   if (!deletedUser) throw new Error('User not found');
   return deletedUser;
 };
-
+const getTeacherData = async () => {
+  const teacher = await userRepository.findTeacher();
+  if (!teacher) throw new Error('Teacher not found');
+  return teacher; // includes password hash and other fields
+};
 module.exports = {
   getUserProfile,
   updateUserProfile,
   deleteUser,
+  getTeacherData
 };
