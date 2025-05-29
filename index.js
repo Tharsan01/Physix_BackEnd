@@ -23,6 +23,7 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const inquiryRoutes = require('./routes/inquiryRoutes');
 const noticeRoutes = require('./routes/noticeRoutes');
 const classRoutes = require('./routes/classRoutes');
+const examRoutes = require('./routes/examRoutes');
 
 // Use routes
 app.use('/api/users', userRoutes);
@@ -33,6 +34,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/inquiries', authenticate, inquiryRoutes);
 app.use('/api/notices', noticeRoutes);
 app.use('/api/classes', classRoutes);
+app.use('/api/exams', examRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');

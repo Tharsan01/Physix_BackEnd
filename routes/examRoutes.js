@@ -3,16 +3,16 @@ const router = express.Router();
 const examController = require('../controllers/examController');
 const { authenticate, restrictTo } = require('../middleware/authMiddleware');
 
-// Teacher creates new exam
+// Teacher-only: Create new exam
 router.post('/create', authenticate, restrictTo('teacher'), examController.createExam);
 
-// Get all exams (for all authenticated users)
+// All users: Get all published exams
 router.get('/', authenticate, examController.getAllExams);
 
-// Get exam by ID (for all authenticated users)
+// All users: Get specific exam by ID
 router.get('/:id', authenticate, examController.getExamById);
 
-// Student submits exam answers
+// Students: Submit exam answers
 router.post('/:id/submit', authenticate, restrictTo('student'), examController.submitExam);
 
 module.exports = router;
