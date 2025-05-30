@@ -1,46 +1,93 @@
-import examService from '../services/examService.js';
+const {
+  createNewExam,
+  listExams,
+  getExamDetails,
+  submitExamAnswers,
+  getStudentResult,
+  getAllSubmissions,
+  getSubmissionDetails
+} = require('../services/examService');
 
-export const createExam = async (req, res) => {
+async function createExam(req, res) {
   try {
-    const exam = await examService.createExam(req.body);
-    res.status(201).json({ message: 'Exam created successfully', exam });
+    const teacherId = req.user.id;
+    const examData = req.body;
+    const exam = await createNewExam(examData, teacherId);
+    res.status(201).json({ success: true, exam });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ success: false, message: err.message });
   }
-};
+}
 
-export const getAllExams = async (req, res) => {
+async function getExams(req, res) {
   try {
-    const exams = await examService.getAllExams();
-    res.status(200).json({ exams });
+    const exams = await listExams();
+    res.json({ success: true, exams });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
-};
+}
 
-export const getExamById = async (req, res) => {
+async function getExam(req, res) {
   try {
-    const exam = await examService.getExamById(req.params.id);
-    res.status(200).json({ exam });
+    const examId = req.params.id;
+    const role = req.user.role; // 'teacher' or 'student'
+    const exam = await getExamDetails(examId, role);
+    res.json({ success: true, exam });
   } catch (err) {
-    res.status(404).json({ error: err.message });
+    res.status(404).json({ success: false, message: err.message });
   }
-};
+}
 
-export const submitExam = async (req, res) => {
+async function submitAnswers(req, res) {
   try {
-    const submission = await examService.submitExam(req.user.id, req.params.examId, req.body);
-    res.status(200).json({ message: 'Exam submitted successfully', submission });
+    const studentId = req.user.id;
+    const examId = req.params.id;
+    const answers = req.body.answers; // [{questionId, selectedOptionIds}]
+    const result = await submitExamAnswers(studentId, examId, answers);
+    res.status(201).json({ success: true, result });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ success: false, message: err.message });
   }
-};
+}
 
-export const getSubmissionsForExam = async (req, res) => {
+async function getResult(req, res) {
   try {
-    const submissions = await examService.getSubmissions(req.params.examId);
-    res.status(200).json({ submissions });
+    const studentId = req.user.id;
+    const examId = req.params.id;
+    const result = await getStudentResult(studentId, examId);
+    res.json({ success: true, result });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(404).json({ success: false, message: err.message });
   }
+}
+
+async function getAllSubmissionsForExam(req, res) {
+  try {
+    const examId = req.params.id;
+    const submissions = await getAllSubmissions(examId);
+    res.json({ success: true, submissions });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+}
+
+async function getSubmissionDetail(req, res) {
+  try {
+    const submissionId = req.params.submissionId;
+    const submission = await getSubmissionDetails(submissionId);
+    res.json({ success: true, submission });
+  } catch (err) {
+    res.status(404).json({ success: false, message: err.message });
+  }
+}
+
+module.exports = {
+  createExam,
+  getExams,
+  getExam,
+  submitAnswers,
+  getResult,
+  getAllSubmissionsForExam,
+  getSubmissionDetail
 };

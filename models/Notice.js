@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const noticeSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    status: { type: String, enum: ['Published', 'Not published'], required: true },
+    status: { type: String, enum: ['Published', 'Not Published'], required: true },
     imageUrl: { type: String }, // stored as URL
   },
   { timestamps: true }

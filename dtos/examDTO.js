@@ -1,36 +1,98 @@
-// Format a single exam (for students and public views)
-const toExamDTO = (exam) => ({
-  id: exam._id,
-  title: exam.title,
-  createdBy: exam.createdBy,
-  createdAt: exam.createdAt,
-  questions: exam.questions.map((q, index) => ({
-    questionIndex: index,
-    text: q.text,
-    options: q.options,
-    multipleAnswers: q.multipleAnswers,
-    required: q.required,
-  })),
-});
+// DTO for returning exam basic info (list)
+function examListDTO(exam) {
+  return {
+    id: exam._id,
+    title: exam.title,
+    date: exam.date,
+    duration: exam.duration
+  };
+}
 
-// Format a single submission (for teacher)
-const toSubmissionDTO = (submission) => ({
-  id: submission._id,
-  studentId: submission.studentId,
-  examId: submission.examId,
-  submittedAt: submission.submittedAt,
-  answers: submission.answers.map((a) => ({
-    questionIndex: a.questionIndex,
-    selectedOptions: a.selectedOptions,
-  })),
-});
+// DTO for returning full exam details
+function examDetailsDTO(exam) {
+  return {
+    id: exam._id,
+    title: exam.title,
+    date: exam.date,
+    duration: exam.duration,
+    status: exam.status,
+    questions: exam.questions.map(q => ({
+      id: q._id,
+      text: q.text,
+      type: q.type,
+      isRequired: q.isRequired,
+      order: q.order,
+      options: q.options.map(o => ({
+        id: o._id,
+        text: o.text,
+        // Do NOT expose isCorrect for students to prevent cheating!
+        // Teacher can have separate API or flag for this
+      }))
+    }))
+  };
+}
 
-// Format multiple submissions grouped by exam
-const toExamWithSubmissionsDTO = (exam, submissions) => ({
-  id: exam._id,
-  title: exam.title,
-  createdBy: exam.createdBy,
-  submissions: submissions.map(toSubmissionDTO),
-});
+// DTO for returning full exam details to teacher (include isCorrect)
+function examDetailsForTeacherDTO(exam) {
+  return {
+    id: exam._id,
+    title: exam.title,
+    date: exam.date,
+    duration: exam.duration,
+    status: exam.status,
+    questions: exam.questions.map(q => ({
+      id: q._id,
+      text: q.text,
+      type: q.type,
+      isRequired: q.isRequired,
+      order: q.order,
+      options: q.options.map(o => ({
+        id: o._id,
+        text: o.text,
+        isCorrect: o.isCorrect
+      }))
+    }))
+  };
+}
 
-export { toExamDTO, toSubmissionDTO, toExamWithSubmissionsDTO };
+// DTO for submission result (student)
+function submissionResultDTO(submission) {
+  return {
+    examId: submission.examId,
+    studentId: submission.studentId,
+    score: submission.score,
+    submittedAt: submission.submittedAt
+    // optionally add detailed feedback if needed
+  };
+}
+
+// DTO for teacher to get all submissions summary
+function submissionSummaryDTO(submission) {
+  return {
+    submissionId: submission._id,
+    studentId: submission.studentId,
+    score: submission.score,
+    submittedAt: submission.submittedAt
+  };
+}
+
+// DTO for detailed submission (teacher view)
+function submissionDetailsDTO(submission) {
+  return {
+    submissionId: submission._id,
+    studentId: submission.studentId,
+    examId: submission.examId,
+    score: submission.score,
+    submittedAt: submission.submittedAt,
+    answers: submission.answers
+  };
+}
+
+module.exports = {
+  examListDTO,
+  examDetailsDTO,
+  examDetailsForTeacherDTO,
+  submissionResultDTO,
+  submissionSummaryDTO,
+  submissionDetailsDTO
+};

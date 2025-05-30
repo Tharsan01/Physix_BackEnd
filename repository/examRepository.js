@@ -1,31 +1,46 @@
-const Exam = require('../models/Exam');
+const { Exam, Submission } = require('../models/Exam');
 
-// Create a new exam
-const createExam = async (data) => {
-  return await Exam.create(data);
-};
-
-// Get all exams
-const getAllExams = async () => {
-  return await Exam.find({ isPublished: true });
-};
-
-// Get exam by ID
-const getExamById = async (examId) => {
-  return await Exam.findById(examId);
-};
-
-// Submit exam (add to submissions array)
-const submitExam = async (examId, submission) => {
-  const exam = await Exam.findById(examId);
-  if (!exam) throw new Error('Exam not found');
-  exam.submissions.push(submission);
+async function createExam(examData) {
+  const exam = new Exam(examData);
   return await exam.save();
-};
+}
+
+async function getAllExams() {
+  return await Exam.find({ status: 'published' }).sort({ date: 1 });
+}
+
+async function getExamById(id) {
+  return await Exam.findById(id);
+}
+
+async function getExamByIdForTeacher(id) {
+  return await Exam.findById(id);
+}
+
+async function saveSubmission(submissionData) {
+  const submission = new Submission(submissionData);
+  return await submission.save();
+}
+
+async function getSubmissionByStudentExam(studentId, examId) {
+  return await Submission.findOne({ studentId, examId });
+}
+
+async function getAllSubmissionsForExam(examId) {
+  return await Submission.find({ examId });
+}
+
+async function getSubmissionById(submissionId) {
+  return await Submission.findById(submissionId);
+}
 
 module.exports = {
   createExam,
   getAllExams,
   getExamById,
-  submitExam,
+  getExamByIdForTeacher,
+  saveSubmission,
+  getSubmissionByStudentExam,
+  getAllSubmissionsForExam,
+  getSubmissionById
 };
