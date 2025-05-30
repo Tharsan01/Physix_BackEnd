@@ -1,18 +1,19 @@
+
 const express = require('express');
 const router = express.Router();
-const examController = require('../controllers/examController');
+const inquiryController = require('../controllers/inquiryController');
 const { authenticate, restrictTo } = require('../middleware/authMiddleware');
 
-// Teacher creates new exam
-router.post('/create', authenticate, restrictTo('teacher'), examController.createExam);
+// Student creates inquiry
+router.post('/create', authenticate, restrictTo('Student'), inquiryController.createInquiry);
 
-// Get all exams (for all authenticated users)
-router.get('/', authenticate, examController.getAllExams);
+// Teacher replies to inquiry
+router.post('/reply', authenticate, restrictTo('Teacher'), inquiryController.replyToInquiry);
 
-// Get exam by ID (for all authenticated users)
-router.get('/:id', authenticate, examController.getExamById);
+// Teacher views all inquiries
+router.get('/', authenticate, restrictTo('Teacher'), inquiryController.getAllInquiries);
 
-// Student submits exam answers
-router.post('/:id/submit', authenticate, restrictTo('student'), examController.submitExam);
+// Get specific inquiry by inquiryNumber (teacher or student owner)
+router.get('/:inquiryNumber', authenticate, inquiryController.getInquiryByNumber);
 
 module.exports = router;

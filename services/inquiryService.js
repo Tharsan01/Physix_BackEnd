@@ -1,3 +1,4 @@
+
 const inquiryRepository = require('../repository/inquiryRepository');
 const InquiryDTO = require('../dtos/inquiryDTO');
 
@@ -30,4 +31,4 @@ module.exports = {
   replyToInquiry,
   getAllInquiries,
   getInquiryByNumber,
-};
+}
