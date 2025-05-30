@@ -1,18 +1,37 @@
 const express = require('express');
 const router = express.Router();
-const examController = require('../controllers/examController');
+
+const {
+  createExam,
+  getExams,
+  getExam,
+  submitAnswers,
+  getResult,
+  getAllSubmissionsForExam,
+  getSubmissionDetail
+} = require('../controllers/examController');
+
 const { authenticate, restrictTo } = require('../middleware/authMiddleware');
 
-// Teacher-only: Create new exam
-router.post('/create', authenticate, restrictTo('teacher'), examController.createExam);
+// Teacher creates new exam
+router.post('/create', authenticate, restrictTo('teacher'), createExam);
 
-// All users: Get all published exams
-router.get('/', authenticate, examController.getAllExams);
+// Get all exams (for all authenticated users)
+router.get('/', authenticate, getExams);
 
-// All users: Get specific exam by ID
-router.get('/:id', authenticate, examController.getExamById);
+// Get exam by ID (for all authenticated users)
+router.get('/:id', authenticate, getExam);
 
-// Students: Submit exam answers
-router.post('/:id/submit', authenticate, restrictTo('student'), examController.submitExam);
+// Student submits exam answers
+router.post('/:id/submit', authenticate, restrictTo('student'), submitAnswers);
+
+// Student gets exam result
+router.get('/:id/result', authenticate, restrictTo('student'), getResult);
+
+// Teacher gets all submissions for an exam
+router.get('/:id/submissions', authenticate, restrictTo('teacher'), getAllSubmissionsForExam);
+
+// Teacher gets submission details by submission ID
+router.get('/:id/submissions/:submissionId', authenticate, restrictTo('teacher'), getSubmissionDetail);
 
 module.exports = router;

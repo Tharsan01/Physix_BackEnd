@@ -1,35 +1,39 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-// Exam schema
-const examSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  questions: [
-    {
-      text: String,
-      options: [String],
-      correctAnswers: [Number], // Indexes of correct options
-      multipleAnswers: { type: Boolean, default: false },
-      required: { type: Boolean, default: false },
-    },
-  ],
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  createdAt: { type: Date, default: Date.now },
+const optionSchema = new mongoose.Schema({
+  text: { type: String, required: true },
+  isCorrect: { type: Boolean, required: true }
 });
 
-// Submission schema
+const questionSchema = new mongoose.Schema({
+  text: { type: String, required: true },
+  type: { type: String, enum: ['single', 'multiple'], required: true },
+  isRequired: { type: Boolean, default: true },
+  options: [optionSchema],
+  order: { type: Number, required: true }
+});
+
+const examSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  date: { type: Date, required: true },
+  duration: { type: Number, required: true }, // in minutes
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  status: { type: String, enum: ['draft', 'published'], default: 'draft' },
+  questions: [questionSchema]
+}, { timestamps: true });
+
 const submissionSchema = new mongoose.Schema({
   examId: { type: mongoose.Schema.Types.ObjectId, ref: 'Exam', required: true },
   studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  answers: [
-    {
-      questionIndex: Number,
-      selectedOptions: [Number],
-    },
-  ],
-  submittedAt: { type: Date, default: Date.now },
+  answers: [{
+    questionId: mongoose.Schema.Types.ObjectId,
+    selectedOptionIds: [mongoose.Schema.Types.ObjectId]
+  }],
+  score: Number,
+  submittedAt: { type: Date, default: Date.now }
 });
 
 const Exam = mongoose.model('Exam', examSchema);
 const Submission = mongoose.model('Submission', submissionSchema);
 
-export { Exam, Submission };
+module.exports = { Exam, Submission };

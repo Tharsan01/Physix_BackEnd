@@ -1,3 +1,4 @@
+
 const Inquiry = require('../models/Inquiry');
 
 async function create(data) {
