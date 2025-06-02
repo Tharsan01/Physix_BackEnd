@@ -30,7 +30,7 @@ const sendOTPEmail = async (email, otp) => {
 // Generate JWT token with role
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user._id, role: user.role },
+    { id: user._id, role: user.role, batchNumber: user.batchNumber },
     process.env.JWT_SECRET,
     { expiresIn: '1d' }
   );
@@ -94,12 +94,13 @@ const verifyEmailOTP = async (email, otp) => {
 const loginUser = async ({ userName, password }) => {
   const user = await userRepository.findByUserName(userName);
   if (!user) throw new Error('User not found');
+
   if (!user.emailVerified) throw new Error('Please verify your email before logging in.');
 
   const isValid = await user.comparePassword(password);
   if (!isValid) throw new Error('Invalid credentials');
 
-  const token = generateToken(user);
+  const token = generateToken(user); 
   return { user: toUserDTO(user), token };
 };
 

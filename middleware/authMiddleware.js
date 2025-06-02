@@ -11,9 +11,14 @@ const authenticate = (req, res, next) => {
     const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    if (!decoded.batchNumber) {
+      return res.status(403).json({ message: 'Forbidden: Batch number missing in token' });
+    }
+
     req.user = {
       id: decoded.id,
       role: decoded.role,
+      batchNumber: decoded.batchNumber,
     };
 
     next();

@@ -4,7 +4,7 @@ const lessonService = require('../services/lessonService');
 const uploadLesson = async (req, res) => {
   try {
     const teacherId = req.user.id;
-    const { title, videoUrl, thumbnailUrl, videoType } = req.body;
+    const { title, videoUrl, thumbnailUrl, videoType,batchNumber } = req.body;
 
     if (!title || !videoUrl || !videoType) {
       return res.status(400).json({ error: 'Title, videoUrl, and videoType are required' });
@@ -15,6 +15,7 @@ const uploadLesson = async (req, res) => {
       videoUrl,
       thumbnailUrl,
       videoType,
+      batchNumber,
     });
 
     res.status(201).json({ message: 'Lesson uploaded successfully', lesson });
@@ -65,13 +66,20 @@ const deleteLesson = async (req, res) => {
 // Get all lessons (Teacher & Student)
 const getAllLessons = async (req, res) => {
   try {
-    const { category } = req.query; // 'free' or 'premium'
-    const lessons = await lessonService.getAllLessons(category);
-    res.json(lessons);
+    const { category } = req.query;
+    const batchNumber = req.user.batchNumber;  // get batchNumber from decoded token (set by auth middleware)
+
+    if (!batchNumber) {
+      return res.status(403).json({ error: 'Batch number not found in token' });
+    }
+
+    const lessons = await lessonService.getAllLessons(category, batchNumber);
+    res.status(200).json(lessons);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Get lesson by ID (Teacher & Student)
 const getLessonById = async (req, res) => {
