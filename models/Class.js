@@ -12,7 +12,7 @@ const classSchema = new mongoose.Schema({
   endTime: { type: String, required: true },
   status: {
     type: String,
-    enum: ['scheduled', 'cancelled', 'completed'],
+    enum: ['active', 'inactive'],
     default: 'scheduled',
   },
   password: { type: String },
