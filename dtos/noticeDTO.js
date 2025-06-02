@@ -4,6 +4,7 @@ function toNoticeDTO(notice) {
     title: notice.title,
     status: notice.status,
     imageUrl: notice.imageUrl,
+    batchNumber: notice.batchNumber,
     createdAt: notice.createdAt,
     updatedAt: notice.updatedAt,
   };

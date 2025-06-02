@@ -16,8 +16,8 @@ async function getAllNotices() {
   return await Notice.find().sort({ createdAt: -1 });
 }
 
-async function getPublishedNotices() {
-  return await Notice.find({ status: 'Published' }).sort({ createdAt: -1 });
+async function getPublishedNotices(batchNumber) {
+  return await Notice.find({ status: 'Published', batchNumber }).sort({ createdAt: -1 });
 }
 
 async function getNoticeById(id) {

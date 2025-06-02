@@ -12,12 +12,20 @@ const addSchedule = async (req, res) => {
 
 const getAllSchedules = async (req, res) => {
   try {
-    const schedules = await classService.getAllSchedulesForStudents();
-    res.status(200).json(schedules);
+    // Extract batchNumber from token-decoded req.user
+    const { batchNumber } = req.user;
+
+    if (!batchNumber) {
+      return res.status(403).json({ success: false, message: 'Batch number missing in token' });
+    }
+
+    const schedules = await classService.getAllSchedulesForStudents(batchNumber);
+    res.status(200).json({ success: true, schedules });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ success: false, message: err.message });
   }
 };
+
 
 const updateSchedule = async (req, res) => {
   try {

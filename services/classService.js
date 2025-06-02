@@ -1,30 +1,23 @@
-const repo = require('../repository/classRepository');
-const classDTO = require('../dtos/classDTO');
-
+const classRepository = require('../repository/classRepository'); 
+const { classDTO } = require('../dtos/classDTO');  // destructure named export
 
 const addSchedule = async (data) => {
-  const result = await repo.createSchedule(data);
+  const result = await classRepository.createSchedule(data);
   return classDTO(result);
 };
 
-
-const getAllSchedulesForStudents = async () => {
-  const schedules = await repo.getAllSchedules();
-  console.log('Schedules:', schedules); // Check what this prints
-  if (!Array.isArray(schedules)) {
-    throw new Error('Schedules is not an array');
-  }
+async function getAllSchedulesForStudents(batchNumber) {
+  const schedules = await classRepository.getAllSchedules(batchNumber);
   return schedules.map(classDTO);
-};
-
+}
 
 const editSchedule = async (id, data) => {
-  const updated = await repo.updateSchedule(id, data);
+  const updated = await classRepository.updateSchedule(id, data);
   return classDTO(updated);
 };
 
 const removeSchedule = async (id) => {
-  return await repo.deleteSchedule(id);
+  return await classRepository.deleteSchedule(id);
 };
 
 module.exports = {

@@ -5,6 +5,7 @@ const classDTO = (cls) => ({
   date: cls.date,
   startTime: cls.startTime,
   endTime: cls.endTime,
+  batchNumber: cls.batchNumber,
   status: cls.status,
   password: cls.password,
   teacherId: cls.teacherId,
@@ -12,4 +13,4 @@ const classDTO = (cls) => ({
   updatedAt: cls.updatedAt,
 });
 
-module.exports = classDTO;  // export directly
+module.exports = { classDTO };  // named export

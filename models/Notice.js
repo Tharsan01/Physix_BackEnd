@@ -5,6 +5,7 @@ const noticeSchema = new mongoose.Schema(
     title: { type: String, required: true },
     status: { type: String, enum: ['Published', 'Not Published'], required: true },
     imageUrl: { type: String }, // stored as URL
+    batchNumber: { type: String, required: true },
   },
   { timestamps: true }
 );

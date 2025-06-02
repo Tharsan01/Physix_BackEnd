@@ -2,8 +2,8 @@ const noticeService = require('../services/noticeService');
 
 async function createNotice(req, res) {
   try {
-    const { title, status, imageUrl } = req.body;
-    const notice = await noticeService.createNotice({ title, status, imageUrl });
+    const { title, status, imageUrl,batchNumber } = req.body;
+    const notice = await noticeService.createNotice({ title, status, imageUrl, batchNumber });
     res.status(201).json({ success: true, notice });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -44,12 +44,19 @@ async function getAllNotices(req, res) {
 
 async function getPublishedNotices(req, res) {
   try {
-    const notices = await noticeService.getPublishedNotices();
+    const { batchNumber } = req.user;
+
+    if (!batchNumber) {
+      return res.status(403).json({ success: false, message: 'Forbidden: Batch number missing in token' });
+    }
+
+    const notices = await noticeService.getPublishedNotices(batchNumber);
     res.json({ success: true, notices });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 }
+
 
 module.exports = {
   createNotice,

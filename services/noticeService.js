@@ -21,10 +21,11 @@ async function getAllNotices() {
   return notices.map(toNoticeDTO);
 }
 
-async function getPublishedNotices() {
-  const notices = await noticeRepo.getPublishedNotices();
+async function getPublishedNotices(batchNumber) {
+  const notices = await noticeRepo.getPublishedNotices(batchNumber);
   return notices.map(toNoticeDTO);
 }
+
 
 async function getNoticeById(id) {
   const notice = await noticeRepo.getNoticeById(id);
