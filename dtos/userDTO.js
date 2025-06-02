@@ -4,6 +4,7 @@ function toUserDTO(user) {
     userName: user.userName,
     email: user.email,
     phone: user.phone,
+    batchNumber: user.batchNumber,
     address: user.address || '',
     subject: user.subject || '',
     classId: user.classId || '',

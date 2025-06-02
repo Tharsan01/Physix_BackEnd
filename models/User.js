@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
   qualifications: { type: String },                 
   subjectSelection: [{ type: String }],
   imageUrl: { type: String },
+  batchNumber: { type: String },
              
 
   password: { type: String, required: true },
