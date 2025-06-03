@@ -1,11 +1,11 @@
 const {
   createExam,
-  getAllExams,
+  getExamsByBatch,
   getExamById,
-  getAllSubmissionsForExam,
-  saveSubmission,
   getSubmissionByStudentExam,
-  getSubmissionById
+  saveSubmission,
+  getAllSubmissionsForExam,
+  getSubmissionById,
 } = require('../repository/examRepository');
 
 const {
@@ -14,17 +14,21 @@ const {
   examDetailsForTeacherDTO,
   submissionResultDTO,
   submissionSummaryDTO,
-  submissionDetailsDTO
+  submissionDetailsDTO,
 } = require('../dtos/examDTO');
 
 async function createNewExam(examData, teacherId) {
-  examData.createdBy = teacherId;
-  const exam = await createExam(examData);
-  return exam;
+  const newExam = await createExam({
+    ...examData,
+    createdBy: teacherId,
+  });
+  return newExam;
 }
 
-async function listExams() {
-  const exams = await getAllExams();
+async function listExams(user) {
+  if (!user.batchNumber) throw new Error('Batch number not found in user token');
+
+  const exams = await getExamsByBatch(user.batchNumber, 'published');
   return exams.map(examListDTO);
 }
 
@@ -39,28 +43,23 @@ async function getExamDetails(examId, role) {
 }
 
 async function submitExamAnswers(studentId, examId, answers) {
-  // Check if already submitted
-  let existingSubmission = await getSubmissionByStudentExam(studentId, examId);
-  if (existingSubmission) throw new Error('You have already submitted this exam');
+  // Prevent duplicate submission
+  const existing = await getSubmissionByStudentExam(studentId, examId);
+  if (existing) throw new Error('You have already submitted this exam');
 
-  // Get exam details to grade
   const exam = await getExamById(examId);
   if (!exam) throw new Error('Exam not found');
 
-  // Calculate score
-  let totalQuestions = exam.questions.length;
+  const totalQuestions = exam.questions.length;
   let correctCount = 0;
 
   for (const question of exam.questions) {
     const submittedAnswer = answers.find(a => a.questionId.toString() === question._id.toString());
-    if (!submittedAnswer) continue; // no answer given
+    if (!submittedAnswer) continue;
 
-    // Check correct options
     const correctOptionIds = question.options.filter(o => o.isCorrect).map(o => o._id.toString());
     const submittedOptionIds = submittedAnswer.selectedOptionIds.map(id => id.toString());
 
-    // For single and multiple type questions:
-    // Check if submitted answers exactly match correct options (order independent)
     if (
       submittedOptionIds.length === correctOptionIds.length &&
       submittedOptionIds.every(id => correctOptionIds.includes(id))
@@ -75,7 +74,7 @@ async function submitExamAnswers(studentId, examId, answers) {
     examId,
     studentId,
     answers,
-    score
+    score,
   });
 
   return submissionResultDTO(submission);
@@ -98,6 +97,24 @@ async function getSubmissionDetails(submissionId) {
   return submissionDetailsDTO(submission);
 }
 
+async function updateExamById(examId, teacherId, updatedData) {
+  const exam = await getExamById(examId);
+  if (!exam) throw new Error('Exam not found');
+  if (exam.createdBy.toString() !== teacherId) throw new Error('Unauthorized to update this exam');
+
+  Object.assign(exam, updatedData);
+  const updatedExam = await exam.save();
+  return examDetailsForTeacherDTO(updatedExam);
+}
+
+async function deleteExamById(examId, teacherId) {
+  const exam = await getExamById(examId);
+  if (!exam) throw new Error('Exam not found');
+  if (exam.createdBy.toString() !== teacherId) throw new Error('Unauthorized to delete this exam');
+
+  await exam.deleteOne();
+}
+
 module.exports = {
   createNewExam,
   listExams,
@@ -105,5 +122,7 @@ module.exports = {
   submitExamAnswers,
   getStudentResult,
   getAllSubmissions,
-  getSubmissionDetails
+  getSubmissionDetails,
+  updateExamById,
+  deleteExamById,
 };

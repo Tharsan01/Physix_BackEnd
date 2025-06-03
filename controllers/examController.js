@@ -5,89 +5,172 @@ const {
   submitExamAnswers,
   getStudentResult,
   getAllSubmissions,
-  getSubmissionDetails
+  getSubmissionDetails,
+  updateExamById,
+  deleteExamById
 } = require('../services/examService');
 
 async function createExam(req, res) {
   try {
     const teacherId = req.user.id;
     const examData = req.body;
+
+    if (!examData.batchNumber) {
+      return res.status(400).json({
+        success: false,
+        message: "Batch number is required to create an exam.",
+      });
+    }
+
     const exam = await createNewExam(examData, teacherId);
-    res.status(201).json({ success: true, exam });
-  } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
-  }
-}
 
-async function getExams(req, res) {
-  try {
-    const exams = await listExams();
-    res.json({ success: true, exams });
+    res.status(201).json({
+      success: true,
+      message: "Exam created successfully.",
+      data: exam,
+    });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 }
 
-async function getExam(req, res) {
+async function getExamsForStudent(req, res) {
   try {
-    const examId = req.params.id;
-    const role = req.user.role; // 'teacher' or 'student'
+    const user = req.user;
+    const exams = await listExams(user);
+
+    res.status(200).json({
+      success: true,
+      data: exams,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+}
+
+async function getExamByIdHandler(req, res) {
+  try {
+    const { examId } = req.params;
+    const role = req.user.role;
+
     const exam = await getExamDetails(examId, role);
-    res.json({ success: true, exam });
+    res.status(200).json({
+      success: true,
+      data: exam,
+    });
   } catch (err) {
     res.status(404).json({ success: false, message: err.message });
   }
 }
 
-async function submitAnswers(req, res) {
+async function submitExamHandler(req, res) {
   try {
     const studentId = req.user.id;
-    const examId = req.params.id;
-    const answers = req.body.answers; // [{questionId, selectedOptionIds}]
+    const { examId } = req.params;
+    const { answers } = req.body;
+
+    if (!Array.isArray(answers) || answers.length === 0) {
+      return res.status(400).json({ success: false, message: "Answers are required." });
+    }
+
     const result = await submitExamAnswers(studentId, examId, answers);
-    res.status(201).json({ success: true, result });
+
+    res.status(201).json({
+      success: true,
+      message: "Exam submitted successfully.",
+      data: result,
+    });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
 }
 
-async function getResult(req, res) {
+async function getStudentResultHandler(req, res) {
   try {
     const studentId = req.user.id;
-    const examId = req.params.id;
+    const { examId } = req.params;
+
     const result = await getStudentResult(studentId, examId);
-    res.json({ success: true, result });
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
   } catch (err) {
     res.status(404).json({ success: false, message: err.message });
   }
 }
 
-async function getAllSubmissionsForExam(req, res) {
+async function getSubmissionsForExamHandler(req, res) {
   try {
-    const examId = req.params.id;
+    const { examId } = req.params;
+
     const submissions = await getAllSubmissions(examId);
-    res.json({ success: true, submissions });
+    res.status(200).json({
+      success: true,
+      data: submissions,
+    });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 }
 
-async function getSubmissionDetail(req, res) {
+async function getSubmissionDetailsHandler(req, res) {
   try {
-    const submissionId = req.params.submissionId;
+    const { submissionId } = req.params;
+
     const submission = await getSubmissionDetails(submissionId);
-    res.json({ success: true, submission });
+    res.status(200).json({
+      success: true,
+      data: submission,
+    });
   } catch (err) {
     res.status(404).json({ success: false, message: err.message });
+  }
+}
+
+async function updateExamHandler(req, res) {
+  try {
+    const { examId } = req.params;
+    const teacherId = req.user.id;
+    const updatedData = req.body;
+
+    const updatedExam = await updateExamById(examId, teacherId, updatedData);
+
+    res.status(200).json({
+      success: true,
+      message: 'Exam updated successfully',
+      data: updatedExam,
+    });
+  } catch (err) {
+    res.status(403).json({ success: false, message: err.message });
+  }
+}
+
+async function deleteExamHandler(req, res) {
+  try {
+    const { examId } = req.params;
+    const teacherId = req.user.id;
+
+    await deleteExamById(examId, teacherId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Exam deleted successfully',
+    });
+  } catch (err) {
+    res.status(403).json({ success: false, message: err.message });
   }
 }
 
 module.exports = {
   createExam,
-  getExams,
-  getExam,
-  submitAnswers,
-  getResult,
-  getAllSubmissionsForExam,
-  getSubmissionDetail
+  getExamsForStudent,
+  getExamByIdHandler,
+  submitExamHandler,
+  getStudentResultHandler,
+  getSubmissionsForExamHandler,
+  getSubmissionDetailsHandler,
+  updateExamHandler,
+  deleteExamHandler,
 };
