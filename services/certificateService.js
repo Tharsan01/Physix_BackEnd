@@ -7,28 +7,39 @@ class CertificateService {
     return new CertificateDTO(saved);
   }
 
-  async getCertificatesByStudent(studentId) {
-    const certificates = await certificateRepository.findByStudentId(studentId);
+   async getCertificatesByBatchNumber(batchNumber) {
+    const certificates = await certificateRepository.findByBatchNumber(batchNumber);
     return certificates.map(cert => new CertificateDTO(cert));
   }
 
-  async updateCertificate(certificateId, studentId, updateData) {
-    // Only update if certificate belongs to student
-    const cert = await certificateRepository.findById(certificateId);
+  async getCertificateById(certId, studentId) {
+    const cert = await certificateRepository.findById(certId);
+    if (!cert) return null;
+    if (cert.studentId.toString() !== studentId) return null; // restrict access
+    return new CertificateDTO(cert);
+  }
+
+  async updateCertificate(certId, studentId, updateData) {
+    const cert = await certificateRepository.findById(certId);
     if (!cert || cert.studentId.toString() !== studentId) return null;
 
     Object.assign(cert, updateData);
-    const updated = await cert.save();
+    const updated = await certificateRepository.update(cert);
     return new CertificateDTO(updated);
   }
 
-  async deleteCertificate(certificateId, studentId) {
-    const cert = await certificateRepository.findById(certificateId);
+  async deleteCertificate(certId, studentId) {
+    const cert = await certificateRepository.findById(certId);
     if (!cert || cert.studentId.toString() !== studentId) return false;
 
-    await cert.remove();
+    await certificateRepository.delete(cert);
     return true;
   }
+  async getCertificatesByStudentId(studentId) {
+    const certificates = await certificateRepository.findByStudentId(studentId);
+    return certificates.map(cert => new CertificateDTO(cert));
+  }
 }
+
 
 module.exports = new CertificateService();

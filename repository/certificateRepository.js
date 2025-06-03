@@ -6,12 +6,20 @@ class CertificateRepository {
     return await cert.save();
   }
 
-  async findByStudentId(studentId) {
-    return await Certificate.find({ studentId });
+   async findByBatchNumber(batchNumber) {
+    return await Certificate.find({ batchNumber });
   }
 
   async findById(id) {
     return await Certificate.findById(id);
+  }
+
+  async update(cert) {
+    return await cert.save();
+  }
+
+  async delete(cert) {
+    return await cert.remove();
   }
 }
 
