@@ -1,6 +1,6 @@
-import Tute from '../models/Tute.js';
+const Tute = require('../models/Tute');
 
-export const tuteRepository = {
+const tuteRepository = {
   create: (tuteData) => new Tute(tuteData).save(),
 
   findById: (id) => Tute.findById(id),
@@ -13,3 +13,5 @@ export const tuteRepository = {
 
   deleteById: (id) => Tute.findByIdAndDelete(id),
 };
+
+module.exports = { tuteRepository };
