@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const optionSchema = new mongoose.Schema({
   text: String,
@@ -15,4 +15,4 @@ const tuteSchema = new mongoose.Schema({
 });
 
 const Tute = mongoose.model('Tute', tuteSchema);
-export default Tute;
+module.exports = Tute;

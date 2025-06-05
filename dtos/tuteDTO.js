@@ -1,4 +1,4 @@
-export function toTuteDTO(tute) {
+function toTuteDTO(tute) {
   return {
     id: tute._id,
     title: tute.title,
@@ -10,3 +10,5 @@ export function toTuteDTO(tute) {
     createdAt: tute.createdAt,
   };
 }
+
+module.exports = { toTuteDTO };

@@ -1,5 +1,5 @@
 const express = require('express');
-const { tuteController } = require('../controllers/tuteController');
+const tuteController = require('../controllers/tuteController');
 const { authenticate, restrictTo } = require('../middleware/authMiddleware');
 
 const router = express.Router();
