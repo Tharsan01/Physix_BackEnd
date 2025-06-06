@@ -44,10 +44,24 @@ const deleteSchedule = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+const getAllSchedulesForTeacher = async (req, res) => {
+  try {
+    // Only allow teachers
+    if (req.user.role !== 'teacher') {
+      return res.status(403).json({ success: false, message: 'Access denied: Only teachers can view all schedules' });
+    }
+
+    const schedules = await classService.getAllSchedulesForTeacher();
+    res.status(200).json({ success: true, schedules });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
 
 module.exports = {
   addSchedule,
   getAllSchedules,
   updateSchedule,
-  deleteSchedule
+  deleteSchedule,
+  getAllSchedulesForTeacher
 };

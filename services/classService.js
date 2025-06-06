@@ -19,10 +19,16 @@ const editSchedule = async (id, data) => {
 const removeSchedule = async (id) => {
   return await classRepository.deleteSchedule(id);
 };
+const getAllSchedulesForTeacher = async () => {
+  const schedules = await classRepository.getAllSchedulesForTeacher();
+  return schedules.map(classDTO);
+};
+
 
 module.exports = {
   addSchedule,
   getAllSchedulesForStudents,
   editSchedule,
   removeSchedule,
+  getAllSchedulesForTeacher
 };

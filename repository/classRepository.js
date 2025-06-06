@@ -16,10 +16,15 @@ const updateSchedule = async (id, data) => {
 const deleteSchedule = async (id) => {
   return await ClassModel.findByIdAndDelete(id);
 };
+const getAllSchedulesForTeacher = async () => {
+  return await ClassModel.find().sort({ date: 1 });
+};
+
 
 module.exports = {
   createSchedule,
   getAllSchedules,
   updateSchedule,
   deleteSchedule,
+  getAllSchedulesForTeacher
 };

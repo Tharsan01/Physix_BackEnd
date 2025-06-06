@@ -1,3 +1,4 @@
+// dtos/userDTO.js
 function toUserDTO(user) {
   return {
     id: user._id,
@@ -17,4 +18,4 @@ function toUserDTO(user) {
   };
 }
 
-module.exports = { toUserDTO };
+module.exports = { toUserDTO }; // ✅ Export it correctly
