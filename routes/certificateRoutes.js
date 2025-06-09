@@ -1,13 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { authenticate } = require('../middleware/authMiddleware');
-const certificateController = require('../controllers/certificateController');
+const { authenticate, restrictTo } = require('../middleware/authMiddleware');
+const certController = require('../controllers/certificateController');
 
-router.post('/upload', authenticate, certificateController.uploadCertificate);
-router.get('/view', authenticate, certificateController.viewCertificates);
-router.get('/view/student', authenticate, certificateController.viewCertificatesByStudent);
-router.get('/:id', authenticate, certificateController.getCertificateById);
-router.put('/edit/:id', authenticate, certificateController.editCertificate);
-router.delete('/delete/:id', authenticate, certificateController.deleteCertificate);
+router.post('/upload', authenticate, restrictTo('teacher'), certController.uploadCertificate);
+router.put('/edit/:id', authenticate, restrictTo('teacher'), certController.editCertificate);
+router.delete('/delete/:id', authenticate, restrictTo('teacher'), certController.deleteCertificate);
+router.get('/student/view', authenticate, restrictTo('student'), certController.viewCertificatesByStudent);
+router.get('/teacher/all', authenticate, restrictTo('teacher'), certController.viewAllCertificatesForTeacher);
 
 module.exports = router;

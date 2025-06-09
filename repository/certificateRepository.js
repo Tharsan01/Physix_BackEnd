@@ -1,3 +1,5 @@
+
+// repository/certificateRepository.js
 const Certificate = require('../models/Certificate');
 
 class CertificateRepository {
@@ -6,7 +8,7 @@ class CertificateRepository {
     return await cert.save();
   }
 
-   async findByBatchNumber(batchNumber) {
+  async findByBatchNumber(batchNumber) {
     return await Certificate.find({ batchNumber });
   }
 
@@ -20,6 +22,14 @@ class CertificateRepository {
 
   async delete(cert) {
     return await cert.remove();
+  }
+
+  async findAllWithStudent(filter = {}) {
+    return await Certificate.find(filter).populate('studentId', 'userName email');
+  }
+
+  async findByStudentId(studentId) {
+    return await Certificate.find({ studentId });
   }
 }
 
