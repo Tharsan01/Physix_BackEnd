@@ -1,5 +1,5 @@
-const tuteRepository = require('../repository/tuteRepository');
-const  toTuteDTO  = require('../dtos/tuteDTO');
+const {tuteRepository} = require('../repository/tuteRepository');
+const  {toTuteDTO}  = require('../dtos/tuteDTO');
 
 const createTute = async (tuteData) => {
   const tute = await tuteRepository.create(tuteData);

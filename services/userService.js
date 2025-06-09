@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const userRepository = require('../repository/userRepository');
-const  toUserDTO  = require('../dtos/userDTO');
+const { toUserDTO } = require('../dtos/userDTO');
 const { generateOTP, sendOTPEmail } = require('./authService');
 
 const getUserProfile = async (userId) => {
