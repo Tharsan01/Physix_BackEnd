@@ -77,10 +77,26 @@ const getLessonById = async (lessonId) => {
   return toLessonDTO(lesson);
 };
 
+const getAllLessonsForTeacher = async () => {
+  const lessons = await lessonRepository.findAll(); // no filter
+  return lessons.map(lesson => ({
+    id: lesson._id,
+    title: lesson.title,
+    videoUrl: lesson.videoUrl,
+    thumbnailUrl: lesson.thumbnailUrl,
+    batchNumber: lesson.batchNumber,
+    isPremium: lesson.isPremium,
+    createdBy: lesson.createdBy.name,
+    createdAt: lesson.createdAt,
+    updatedAt: lesson.updatedAt,
+  }));
+};
+
 module.exports = {
   uploadLesson,
   updateLesson,
   deleteLesson,
   getAllLessons,
-  getLessonById
+  getLessonById,
+  getAllLessonsForTeacher
 };
