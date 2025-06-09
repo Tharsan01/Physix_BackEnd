@@ -1,4 +1,4 @@
-const certificateService = require('../services/certificateService');
+const {certificateService} = require('../services/certificateService');
 
 // Upload new certificate
 const uploadCertificate = async (req, res) => {
