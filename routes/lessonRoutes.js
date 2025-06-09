@@ -15,4 +15,8 @@ router.delete('/delete/:id', authenticate, restrictTo('Teacher'), lessonControll
 router.get('/all', authenticate, lessonController.getAllLessons);
 router.get('/id/:id', authenticate, lessonController.getLessonById);
 
+
+router.get('/teacher/all', authenticate, restrictTo('teacher'), lessonController.getAllLessonsForTeacher);
+
+
 module.exports = router;

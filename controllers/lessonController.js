@@ -95,6 +95,15 @@ const getLessonById = async (req, res) => {
   }
 };
 
+const getAllLessonsForTeacher = async (req, res) => {
+  try {
+    const lessons = await lessonService.getAllLessonsForTeacher(); // no batch filter
+    res.status(200).json(lessons);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 
 module.exports = {
@@ -103,4 +112,5 @@ module.exports = {
   deleteLesson,
   getAllLessons,
   getLessonById,
+  getAllLessonsForTeacher
 };
