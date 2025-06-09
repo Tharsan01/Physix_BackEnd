@@ -6,6 +6,7 @@ class InquiryDTO {
     this.message = message;
     this.reply = reply;
     this.inquiryNumber = inquiryNumber;
+    this.status = reply ? 'Replied' : 'Not Replied'; // Add this line
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
