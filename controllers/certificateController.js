@@ -1,4 +1,3 @@
-// controllers/certificateController.js
 const certificateService = require('../services/certificateService');
 
 const uploadCertificate = async (req, res) => {
