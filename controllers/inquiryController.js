@@ -18,15 +18,34 @@ async function createInquiry(req, res) {
   }
 }
 
+// async function replyToInquiry(req, res) {
+//   try {
+//     const { inquiryNumber, reply } = req.body;
+
+//     if (!inquiryNumber || !reply) {
+//       return res.status(400).json({ message: 'Inquiry number and reply are required' });
+//     }
+
+//     const inquiryDTO = await inquiryService.replyToInquiry(inquiryNumber, reply);
+//     return res.status(200).json(inquiryDTO);
+//   } catch (err) {
+//     console.error(err);
+//     if (err.message === 'Inquiry not found') {
+//       return res.status(404).json({ message: err.message });
+//     }
+//     return res.status(500).json({ message: err.message || 'Server error while replying to inquiry' });
+//   }
+// }
+
 async function replyToInquiry(req, res) {
   try {
-    const { inquiryNumber, reply } = req.body;
+    const { id, reply } = req.body;
 
-    if (!inquiryNumber || !reply) {
-      return res.status(400).json({ message: 'Inquiry number and reply are required' });
+    if (!id || !reply) {
+      return res.status(400).json({ message: 'Inquiry ID and reply are required' });
     }
 
-    const inquiryDTO = await inquiryService.replyToInquiry(inquiryNumber, reply);
+    const inquiryDTO = await inquiryService.replyToInquiry(id, reply);
     return res.status(200).json(inquiryDTO);
   } catch (err) {
     console.error(err);

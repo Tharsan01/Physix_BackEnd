@@ -4,10 +4,15 @@ const lessonSchema = new mongoose.Schema({
   title: { type: String, required: true },
   videoUrl: { type: String, required: true },
   thumbnailUrl: { type: String }, // optional
-  batchNumber: { type: String, required: true }, // e.g., "Batch 1"
-  isPremium: {type: Boolean,default: false // false = free, true = premium
+  batchNumber: { type: String, required: true },
+  isPremium: { type: Boolean, default: false },
+  lessonType: { 
+    type: String, 
+    required: true,
+    enum: ['Theory', 'Revision', 'Practical', 'Paper Class', 'Seminar'],
+    default: 'Theory'
   },
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // required teacher ID
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Lesson', lessonSchema);

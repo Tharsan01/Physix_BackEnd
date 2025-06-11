@@ -10,7 +10,7 @@ const addSchedule = async (req, res) => {
   }
 };
 
-const getAllSchedules = async (req, res) => {
+const getAllSchedules = async (req, res) => { 
   try {
     // Extract batchNumber from token-decoded req.user
     const { batchNumber } = req.user;

@@ -6,8 +6,16 @@ async function createInquiry(userId, subject, message) {
   return new InquiryDTO(createdInquiry);
 }
 
-async function replyToInquiry(inquiryNumber, reply) {
-  const inquiry = await inquiryRepository.findByInquiryNumber(inquiryNumber);
+// async function replyToInquiry(inquiryNumber, reply) {
+//   const inquiry = await inquiryRepository.findByInquiryNumber(inquiryNumber);
+//   if (!inquiry) throw new Error('Inquiry not found');
+//   inquiry.reply = reply;
+//   const updatedInquiry = await inquiryRepository.save(inquiry);
+//   return new InquiryDTO(updatedInquiry);
+// }
+
+async function replyToInquiry(id, reply) {
+  const inquiry = await inquiryRepository.findById(id);
   if (!inquiry) throw new Error('Inquiry not found');
   inquiry.reply = reply;
   const updatedInquiry = await inquiryRepository.save(inquiry);

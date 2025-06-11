@@ -4,9 +4,10 @@ function toLessonDTO(lesson) {
     title: lesson.title,
     videoUrl: lesson.videoUrl,
     thumbnailUrl: lesson.thumbnailUrl,
-    videoType: lesson.videoType,
     batchNumber: lesson.batchNumber,
-    uploadedBy: lesson.uploadedBy,
+    isPremium: lesson.isPremium,
+    lessonType: lesson.lessonType,
+    createdBy: lesson.createdBy?.name || lesson.createdBy, // handle populated or non-populated
     createdAt: lesson.createdAt,
     updatedAt: lesson.updatedAt,
   };

@@ -1,12 +1,12 @@
 const lessonRepository = require('../repository/lessonRepository');
 const { toLessonDTO } = require('../dtos/lessonDTO');
 
-const uploadLesson = async (teacherId, { title, videoUrl, thumbnailUrl, videoType, batchNumber }) => {
+const uploadLesson = async (teacherId, { title, videoUrl, thumbnailUrl, lessonType, batchNumber }) => {
   const lesson = await lessonRepository.createLesson({
     title,
     videoUrl,
     thumbnailUrl,
-    videoType,
+    lessonType,
     batchNumber,
     createdBy: teacherId
   });
@@ -43,18 +43,13 @@ const deleteLesson = async (lessonId, teacherId) => {
 };
 
 const getAllLessons = async (category, batchNumber) => {
-  let filter = {};
+  let filter = { batchNumber }; // Always filter by batchNumber
 
   if (category === 'free') {
     filter.isPremium = false;
   } else if (category === 'premium') {
     filter.isPremium = true;
   }
-
-  // **Force filter by batchNumber from token**
-  filter.batchNumber = batchNumber;
-
-  console.log('FINAL FILTER:', filter);
 
   const lessons = await lessonRepository.findAll(filter);
   return lessons.map(lesson => ({
@@ -64,7 +59,8 @@ const getAllLessons = async (category, batchNumber) => {
     thumbnailUrl: lesson.thumbnailUrl,
     batchNumber: lesson.batchNumber,
     isPremium: lesson.isPremium,
-    createdBy: lesson.createdBy.name,
+    lessonType: lesson.lessonType,
+    createdBy: lesson.createdBy?.name || lesson.createdBy,
     createdAt: lesson.createdAt,
     updatedAt: lesson.updatedAt,
   }));

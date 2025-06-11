@@ -1,20 +1,20 @@
 const lessonService = require('../services/lessonService');
 
-// Upload a new lesson (Teacher only)
+// In uploadLesson function:
 const uploadLesson = async (req, res) => {
   try {
     const teacherId = req.user.id;
-    const { title, videoUrl, thumbnailUrl, videoType,batchNumber } = req.body;
+    const { title, videoUrl, thumbnailUrl, lessonType, batchNumber } = req.body;
 
-    if (!title || !videoUrl || !videoType) {
-      return res.status(400).json({ error: 'Title, videoUrl, and videoType are required' });
+    if (!title || !videoUrl || !lessonType || !batchNumber) {
+      return res.status(400).json({ error: 'Title, videoUrl, lessonType, and batchNumber are required' });
     }
 
     const lesson = await lessonService.uploadLesson(teacherId, {
       title,
       videoUrl,
       thumbnailUrl,
-      videoType,
+      lessonType,
       batchNumber,
     });
 
