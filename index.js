@@ -24,6 +24,7 @@ const noticeRoutes = require('./routes/noticeRoutes');
 const classRoutes = require('./routes/classRoutes');
 const examRoutes = require('./routes/examRoutes');
 const tuteRoutes = require('./routes/tuteRoutes');
+const topicRoutes = require('./routes/topicRoutes');
 
 // Use routes
 app.use('/api/users', userRoutes);
@@ -36,6 +37,7 @@ app.use('/api/notices', noticeRoutes);
 app.use('/api/classes', classRoutes);
 app.use('/api/exams', examRoutes);
 app.use('/api/tutes', tuteRoutes);  
+app.use('/api/topics', topicRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');

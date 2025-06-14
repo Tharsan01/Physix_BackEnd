@@ -1,17 +1,25 @@
 const lessonRepository = require('../repository/lessonRepository');
 const { toLessonDTO } = require('../dtos/lessonDTO');
 
-const uploadLesson = async (teacherId, { title, videoUrl, thumbnailUrl, lessonType, batchNumber }) => {
+const uploadLesson = async (teacherId, { title, videoUrl, thumbnailUrl, lessonType, batchNumber, isPremium, lessonTopic }) => {
+  // Validate lessonTopic exists
+  const topic = await Topic.findById(lessonTopic);
+  if (!topic) {
+    throw new Error('Invalid lesson topic');
+  }
+
   const lesson = await lessonRepository.createLesson({
     title,
     videoUrl,
     thumbnailUrl,
     lessonType,
     batchNumber,
-    createdBy: teacherId
+    isPremium,
+    lessonTopic,
+    createdBy: teacherId,
   });
 
-  return toLessonDTO(lesson);
+  return lesson; // Return the lesson directly, no DTO
 };
 
 const updateLesson = async (lessonId, teacherId, updatedData) => {

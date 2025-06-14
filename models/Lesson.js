@@ -6,12 +6,13 @@ const lessonSchema = new mongoose.Schema({
   thumbnailUrl: { type: String }, // optional
   batchNumber: { type: String, required: true },
   isPremium: { type: Boolean, default: false },
-  lessonType: { 
-    type: String, 
+  lessonType: {
+    type: String,
     required: true,
     enum: ['Theory', 'Revision', 'Practical', 'Paper Class', 'Seminar'],
-    default: 'Theory'
+    default: 'Theory',
   },
+  lessonTopic: { type: mongoose.Schema.Types.ObjectId, ref: 'Topic', required: true }, // Add this
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
 

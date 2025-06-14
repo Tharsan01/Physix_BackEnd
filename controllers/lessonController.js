@@ -4,10 +4,10 @@ const lessonService = require('../services/lessonService');
 const uploadLesson = async (req, res) => {
   try {
     const teacherId = req.user.id;
-    const { title, videoUrl, thumbnailUrl, lessonType, batchNumber } = req.body;
+    const { title, videoUrl, thumbnailUrl, lessonType, batchNumber, isPremium, lessonTopic } = req.body;
 
-    if (!title || !videoUrl || !lessonType || !batchNumber) {
-      return res.status(400).json({ error: 'Title, videoUrl, lessonType, and batchNumber are required' });
+    if (!title || !videoUrl || !lessonType || !batchNumber || !lessonTopic) {
+      return res.status(400).json({ error: 'Title, videoUrl, lessonType, batchNumber, and lessonTopic are required' });
     }
 
     const lesson = await lessonService.uploadLesson(teacherId, {
@@ -16,6 +16,8 @@ const uploadLesson = async (req, res) => {
       thumbnailUrl,
       lessonType,
       batchNumber,
+      isPremium: !!isPremium, // Convert to boolean
+      lessonTopic,
     });
 
     res.status(201).json({ message: 'Lesson uploaded successfully', lesson });
