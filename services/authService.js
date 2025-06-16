@@ -55,21 +55,16 @@ const registerUser = async ({ userName, email, password, classId, phone,batchNum
     
   });
 
-  // Generate OTP and set verification fields
-  const otp = generateOTP();
-  newUser.emailOTP = otp;
-  newUser.emailOTPExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
-  newUser.emailVerified = false;
+
 
   // Save the new user with OTP fields set
   await newUser.save();
 
-  // Send OTP email
-  await sendOTPEmail(email, otp);
+
 
   return {
     user: toUserDTO(newUser),
-    message: 'User registered. Please verify your email using the OTP sent to your inbox.',
+    message: 'User registered.',
   };
 };
 
