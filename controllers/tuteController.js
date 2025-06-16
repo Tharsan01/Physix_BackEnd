@@ -4,7 +4,13 @@ const tuteService = require('../services/tuteService.js');
 const createTute = async (req, res) => {
   try {
     const teacherId = req.user.id;
-    const tuteData = { ...req.body, createdBy: teacherId };
+    const tuteData = { 
+      ...req.body, 
+      createdBy: teacherId,
+      lessonType: req.body.lessonType,
+      lessonTopic: req.body.lessonTopic
+    };
+    
     const tute = await tuteService.createTute(tuteData);
     res.status(201).json({ success: true, data: tute });
   } catch (error) {

@@ -1,7 +1,12 @@
 const {tuteRepository} = require('../repository/tuteRepository');
-const  {toTuteDTO}  = require('../dtos/tuteDTO');
+const {toTuteDTO} = require('../dtos/tuteDTO');
 
 const createTute = async (tuteData) => {
+  // Validate lessonType and lessonTopic
+  if (!tuteData.lessonType || !tuteData.lessonTopic) {
+    throw new Error('Lesson type and topic are required');
+  }
+  
   const tute = await tuteRepository.create(tuteData);
   return toTuteDTO(tute);
 };
@@ -23,6 +28,11 @@ const getTutesByBatchNumber = async (batchNumber) => {
 };
 
 const updateTute = async (id, updateData) => {
+  // Validate lessonType if it's being updated
+  if (updateData.lessonType && !['Theory', 'Revision', 'Practical', 'Paper Class', 'Seminar'].includes(updateData.lessonType)) {
+    throw new Error('Invalid lesson type');
+  }
+  
   const updated = await tuteRepository.updateById(id, updateData);
   if (!updated) throw new Error('Update failed, tute not found');
   return toTuteDTO(updated);

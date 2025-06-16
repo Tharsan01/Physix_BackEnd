@@ -11,6 +11,13 @@ const classSchema = new mongoose.Schema({
   startTime: { type: String, required: true },
   endTime: { type: String, required: true },
   batchNumber: { type: String, required: true },
+      lessonType: {
+        type: String,
+        required: true,
+        enum: ['Theory', 'Revision', 'Practical', 'Paper Class', 'Seminar'],
+        default: 'Theory',
+      },
+      lessonTopic: { type: mongoose.Schema.Types.ObjectId, ref: 'Topic', required: true }, // Add this
   status: {
     type: String,
     enum: ['active', 'inactive'],

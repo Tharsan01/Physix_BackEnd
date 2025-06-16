@@ -6,6 +6,8 @@ function toTuteDTO(tute) {
     subject: tute.subject,
     documentUrl: tute.documentUrl,
     status: tute.status,
+    lessonType: tute.lessonType,
+    lessonTopic: tute.lessonTopic,
     createdBy: tute.createdBy,
     createdAt: tute.createdAt,
   };

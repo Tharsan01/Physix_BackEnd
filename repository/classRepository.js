@@ -1,25 +1,30 @@
-const ClassModel = require('../models/Class');  // Ensure Class.js is correctly named with capital 'C'
+const ClassModel = require('../models/Class');
 
 const createSchedule = async (data) => {
   return await ClassModel.create(data);
 };
 
 const getAllSchedules = async (batchNumber) => {
-  console.log('Fetching schedules for batchNumber:', batchNumber);
-  return await ClassModel.find({ status: 'active', batchNumber }).sort({ date: 1 });
+  return await ClassModel.find({ status: 'active', batchNumber })
+    .populate('lessonTopic', 'name') // Populate topic name
+    .sort({ date: 1 });
 };
 
 const updateSchedule = async (id, data) => {
-  return await ClassModel.findByIdAndUpdate(id, data, { new: true });
+  return await ClassModel.findByIdAndUpdate(id, data, { new: true })
+    .populate('lessonTopic', 'name');
 };
 
 const deleteSchedule = async (id) => {
   return await ClassModel.findByIdAndDelete(id);
 };
-const getAllSchedulesForTeacher = async () => {
-  return await ClassModel.find().sort({ date: 1 });
-};
 
+const getAllSchedulesForTeacher = async () => {
+  return await ClassModel.find()
+    .populate('lessonTopic', 'name') // Populate for teacher view
+    .populate('teacherId', 'name email') // Also populate teacher info
+    .sort({ date: 1 });
+};
 
 module.exports = {
   createSchedule,
