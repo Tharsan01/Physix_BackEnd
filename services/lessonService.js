@@ -1,12 +1,27 @@
 const lessonRepository = require('../repository/lessonRepository');
-const { toLessonDTO } = require('../dtos/lessonDTO');
+let Topic;
+try {
+  Topic = require('../models/Topic');
+  console.log('Topic model loaded successfully');
+} catch (error) {
+  console.error('Error loading Topic model:', error.message);
+  throw new Error('Topic model could not be loaded');
+}
 
 const uploadLesson = async (teacherId, { title, videoUrl, thumbnailUrl, lessonType, batchNumber, isPremium, lessonTopic }) => {
-  // Validate lessonTopic exists
+  if (!Topic) {
+    console.error('Topic model is undefined in uploadLesson');
+    throw new Error('Topic is not defined');
+  }
+
+  console.log('Validating lessonTopic ID:', lessonTopic);
   const topic = await Topic.findById(lessonTopic);
   if (!topic) {
+    console.log('Topic not found for ID:', lessonTopic);
     throw new Error('Invalid lesson topic');
   }
+
+  console.log('Topic validated:', topic.name);
 
   const lesson = await lessonRepository.createLesson({
     title,
@@ -19,28 +34,26 @@ const uploadLesson = async (teacherId, { title, videoUrl, thumbnailUrl, lessonTy
     createdBy: teacherId,
   });
 
-  return lesson; // Return the lesson directly, no DTO
+  return lesson; // Return raw lesson object
 };
 
 const updateLesson = async (lessonId, teacherId, updatedData) => {
   const existingLesson = await lessonRepository.findById(lessonId);
   if (!existingLesson) throw new Error('Lesson not found');
 
-  // ✅ Fix: use createdBy._id for populated lesson
   const creatorId = existingLesson.createdBy._id || existingLesson.createdBy;
   if (creatorId.toString() !== teacherId.toString()) {
     throw new Error('You are not authorized to edit this lesson');
   }
 
   const updatedLesson = await lessonRepository.updateLesson(lessonId, updatedData);
-  return toLessonDTO(updatedLesson);
+  return updatedLesson; // Return raw lesson object
 };
 
 const deleteLesson = async (lessonId, teacherId) => {
   const lesson = await lessonRepository.findById(lessonId);
   if (!lesson) throw new Error('Lesson not found');
 
-  // ✅ Fix: use createdBy._id for populated lesson
   const creatorId = lesson.createdBy._id || lesson.createdBy;
   if (creatorId.toString() !== teacherId.toString()) {
     throw new Error('You are not authorized to delete this lesson');
@@ -51,7 +64,7 @@ const deleteLesson = async (lessonId, teacherId) => {
 };
 
 const getAllLessons = async (category, batchNumber) => {
-  let filter = { batchNumber }; // Always filter by batchNumber
+  let filter = { batchNumber };
 
   if (category === 'free') {
     filter.isPremium = false;
@@ -68,21 +81,21 @@ const getAllLessons = async (category, batchNumber) => {
     batchNumber: lesson.batchNumber,
     isPremium: lesson.isPremium,
     lessonType: lesson.lessonType,
+    lessonTopic: lesson.lessonTopic, // Include lessonTopic
     createdBy: lesson.createdBy?.name || lesson.createdBy,
     createdAt: lesson.createdAt,
     updatedAt: lesson.updatedAt,
   }));
 };
 
-
 const getLessonById = async (lessonId) => {
   const lesson = await lessonRepository.findById(lessonId);
   if (!lesson) throw new Error('Lesson not found');
-  return toLessonDTO(lesson);
+  return lesson; // Return raw lesson object
 };
 
 const getAllLessonsForTeacher = async () => {
-  const lessons = await lessonRepository.findAll(); // no filter
+  const lessons = await lessonRepository.findAll();
   return lessons.map(lesson => ({
     id: lesson._id,
     title: lesson.title,
@@ -90,7 +103,9 @@ const getAllLessonsForTeacher = async () => {
     thumbnailUrl: lesson.thumbnailUrl,
     batchNumber: lesson.batchNumber,
     isPremium: lesson.isPremium,
-    createdBy: lesson.createdBy.name,
+    lessonType: lesson.lessonType,
+    lessonTopic: lesson.lessonTopic, // Include lessonTopic
+    createdBy: lesson.createdBy?.name || lesson.createdBy,
     createdAt: lesson.createdAt,
     updatedAt: lesson.updatedAt,
   }));
@@ -102,5 +117,5 @@ module.exports = {
   deleteLesson,
   getAllLessons,
   getLessonById,
-  getAllLessonsForTeacher
+  getAllLessonsForTeacher,
 };
