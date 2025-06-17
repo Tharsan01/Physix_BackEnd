@@ -8,7 +8,6 @@ function toUserDTO(user) {
     batchNumber: user.batchNumber,
     address: user.address || '',
     subject: user.subject || '',
-    classId: user.classId || '',
     qualifications: user.qualifications || '',
     subjectSelection: user.subjectSelection || [],
     imageUrl: user.imageUrl || null,

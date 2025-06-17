@@ -37,7 +37,7 @@ const generateToken = (user) => {
 };
 
 // Register user (role = student)
-const registerUser = async ({ userName, email, password, classId, phone,batchNumber }) => {
+const registerUser = async ({ userName, email, password, phone,batchNumber }) => {
   const existingUser = await userRepository.findByEmail(email);
   if (existingUser) throw new Error('User already exists');
 
@@ -48,23 +48,19 @@ const registerUser = async ({ userName, email, password, classId, phone,batchNum
     userName,
     email,
     password,
-    classId,
     phone,
     role,
     batchNumber,
     
   });
 
-
-
   // Save the new user with OTP fields set
   await newUser.save();
 
-
-
   return {
-    user: toUserDTO(newUser),
     message: 'User registered.',
+    user: toUserDTO(newUser),
+    
   };
 };
 
