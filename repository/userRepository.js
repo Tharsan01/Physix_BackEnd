@@ -18,10 +18,15 @@ const findTeacher = async () => {
   return await User.findOne({ role: 'teacher' });
 };
 
+const getAllStudents = async () => {
+  return await User.find({ role: 'student' }).sort({ createdAt: -1 });
+};
+
 
 module.exports = {
   findById,
   updateById,
   deleteById,
-  findTeacher
+  findTeacher,
+  getAllStudents
 };

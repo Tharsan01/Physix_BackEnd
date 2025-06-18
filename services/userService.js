@@ -64,9 +64,15 @@ const getTeacherData = async () => {
   if (!teacher) throw new Error('Teacher not found');
   return teacher; // includes password hash and other fields
 };
+
+const getAllStudents = async () => {
+  const students = await userRepository.getAllStudents();
+  return students.map(toUserDTO);
+};
 module.exports = {
   getUserProfile,
   updateUserProfile,
   deleteUser,
-  getTeacherData
+  getTeacherData,
+  getAllStudents
 };

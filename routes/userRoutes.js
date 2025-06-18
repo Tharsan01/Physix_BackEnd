@@ -14,4 +14,6 @@ router.post('/teacher/upload', authenticate, userController.uploadOrEditTeacherP
 // Fix here: reference getTeacherCurrentPassword via userController
 router.get('/teacher/password', authenticate, restrictTo('teacher'), userController.getTeacherCurrentPassword);
 
+router.get('/students', authenticate,restrictTo('teacher'), userController.getAllStudents);
+
 module.exports = router;
