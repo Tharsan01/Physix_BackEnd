@@ -22,11 +22,20 @@ const getAllStudents = async () => {
   return await User.find({ role: 'student' }).sort({ createdAt: -1 });
 };
 
+const getById = async (id) => {
+  return await User.findById(id);
+};
+
+const deleteStudentById = async () => {
+  await userRepository.deleteById(studentId);
+};
 
 module.exports = {
   findById,
   updateById,
   deleteById,
   findTeacher,
-  getAllStudents
+  getAllStudents,
+  deleteStudentById,
+  getById
 };

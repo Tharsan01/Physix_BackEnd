@@ -93,6 +93,21 @@ const getAllStudents = async (req, res) => {
   }
 };
 
+// DELETE: Teacher deletes a student by ID
+const deleteStudentById = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+
+    // Call the service layer to delete the student
+    await userService.deleteStudentById(studentId);
+
+    res.status(200).json({ message: 'Student deleted successfully.' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+
 
 
 module.exports = {
@@ -101,5 +116,6 @@ module.exports = {
   deleteProfile,
   uploadOrEditTeacherProfile,
   getTeacherCurrentPassword,
-  getAllStudents
+  getAllStudents,
+  deleteStudentById
 };

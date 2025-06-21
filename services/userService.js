@@ -69,10 +69,25 @@ const getAllStudents = async () => {
   const students = await userRepository.getAllStudents();
   return students.map(toUserDTO);
 };
+
+const deleteStudentById = async (studentId) => {
+  // Ensure student exists and role is 'student'
+  const student = await userRepository.getById(studentId);
+  if (!student) {
+    throw new Error('Student not found.');
+  }
+  if (student.role !== 'student') {
+    throw new Error('The specified user is not a student.');
+  }
+
+  
+};
+
 module.exports = {
   getUserProfile,
   updateUserProfile,
   deleteUser,
   getTeacherData,
-  getAllStudents
+  getAllStudents,
+  deleteStudentById
 };
