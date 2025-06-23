@@ -105,6 +105,22 @@ const getAllLessonsForTeacher = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+const getLessonsByType = async (req, res) => {
+  try {
+    const { lessonType } = req.query;
+    const userBatchNumber = req.user.batchNumber;
+
+    if (!lessonType) {
+      return res.status(400).json({ message: 'lessonType is required' });
+    }
+
+    const lessons = await lessonService.findLessonsByTypeAndBatch(lessonType, userBatchNumber);
+    res.status(200).json(lessons);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 
 
@@ -114,5 +130,6 @@ module.exports = {
   deleteLesson,
   getAllLessons,
   getLessonById,
-  getAllLessonsForTeacher
+  getAllLessonsForTeacher,
+  getLessonsByType
 };

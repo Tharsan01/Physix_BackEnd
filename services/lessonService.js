@@ -110,6 +110,13 @@ const getAllLessonsForTeacher = async () => {
     updatedAt: lesson.updatedAt,
   }));
 };
+const findLessonsByTypeAndBatch = async (lessonType, batchNumber) => {
+  const filter = {
+    lessonType,
+    batchNumber,
+  };
+  return await lessonRepository.findAll(filter);
+};
 
 module.exports = {
   uploadLesson,
@@ -118,4 +125,5 @@ module.exports = {
   getAllLessons,
   getLessonById,
   getAllLessonsForTeacher,
+  findLessonsByTypeAndBatch
 };
