@@ -110,6 +110,19 @@ const getAllLessonsForTeacher = async () => {
     updatedAt: lesson.updatedAt,
   }));
 };
+const findLessonsByTypeAndBatch = async (lessonType, title, batchNumber) => {
+  const filter = {
+    lessonType,
+    batchNumber,
+  };
+
+  // If title is given, add a case-insensitive regex for partial match:
+  if (title) {
+    filter.title = { $regex: title, $options: 'i' };
+  }
+
+  return await lessonRepository.findAll(filter);
+};
 
 module.exports = {
   uploadLesson,
@@ -118,4 +131,5 @@ module.exports = {
   getAllLessons,
   getLessonById,
   getAllLessonsForTeacher,
+  findLessonsByTypeAndBatch
 };

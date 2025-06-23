@@ -1,36 +1,40 @@
-
-// repository/certificateRepository.js
 const Certificate = require('../models/Certificate');
 
-class CertificateRepository {
-  async create(data) {
-    const cert = new Certificate(data);
-    return await cert.save();
-  }
+const create = async (data) => {
+  const cert = new Certificate(data);
+  return await cert.save();
+};
 
-  async findByBatchNumber(batchNumber) {
-    return await Certificate.find({ batchNumber });
-  }
+const findById = async (id) => {
+  return await Certificate.findById(id);
+};
 
-  async findById(id) {
-    return await Certificate.findById(id);
-  }
+const update = async (cert) => {
+  return await cert.save();
+};
 
-  async update(cert) {
-    return await cert.save();
-  }
+const deleteById = async (id) => {
+  return await Certificate.findByIdAndDelete(id);
+};
 
-  async delete(cert) {
-    return await cert.remove();
-  }
+const findByBatchNumber = async (batchNumber) => {
+  return await Certificate.find({ batchNumber });
+};
 
-  async findAllWithStudent(filter = {}) {
-    return await Certificate.find(filter).populate('studentId', 'userName email');
-  }
+const findAllWithStudent = async (filter = {}) => {
+  return await Certificate.find(filter).populate('studentId', 'userName email');
+};
 
-  async findByStudentId(studentId) {
-    return await Certificate.find({ studentId });
-  }
-}
+const findByStudentId = async (studentId) => {
+  return await Certificate.find({ studentId });
+};
 
-module.exports = new CertificateRepository();
+module.exports = {
+  create,
+  findById,
+  update,
+  deleteById, // renamed for clarity
+  findByBatchNumber,
+  findAllWithStudent,
+  findByStudentId,
+};

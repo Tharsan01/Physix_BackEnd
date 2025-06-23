@@ -1,7 +1,6 @@
-
 const inquiryService = require('../services/inquiryService');
 
-async function createInquiry(req, res) {
+const createInquiry = async (req, res) => {
   try {
     const userId = req.user.id;
     const { subject, message } = req.body;
@@ -16,36 +15,17 @@ async function createInquiry(req, res) {
     console.error(err);
     return res.status(500).json({ message: err.message || 'Server error while creating inquiry' });
   }
-}
+};
 
-// async function replyToInquiry(req, res) {
-//   try {
-//     const { inquiryNumber, reply } = req.body;
-
-//     if (!inquiryNumber || !reply) {
-//       return res.status(400).json({ message: 'Inquiry number and reply are required' });
-//     }
-
-//     const inquiryDTO = await inquiryService.replyToInquiry(inquiryNumber, reply);
-//     return res.status(200).json(inquiryDTO);
-//   } catch (err) {
-//     console.error(err);
-//     if (err.message === 'Inquiry not found') {
-//       return res.status(404).json({ message: err.message });
-//     }
-//     return res.status(500).json({ message: err.message || 'Server error while replying to inquiry' });
-//   }
-// }
-
-async function replyToInquiry(req, res) {
+const replyToInquiry = async (req, res) => {
   try {
-    const { id, reply } = req.body;
+    const { inquiryNumber, reply } = req.body;
 
-    if (!id || !reply) {
-      return res.status(400).json({ message: 'Inquiry ID and reply are required' });
+    if (!inquiryNumber || !reply) {
+      return res.status(400).json({ message: 'Inquiry number and reply are required' });
     }
 
-    const inquiryDTO = await inquiryService.replyToInquiry(id, reply);
+    const inquiryDTO = await inquiryService.replyToInquiry(inquiryNumber, reply);
     return res.status(200).json(inquiryDTO);
   } catch (err) {
     console.error(err);
@@ -54,9 +34,9 @@ async function replyToInquiry(req, res) {
     }
     return res.status(500).json({ message: err.message || 'Server error while replying to inquiry' });
   }
-}
+};
 
-async function getAllInquiries(req, res) {
+const getAllInquiries = async (req, res) => {
   try {
     const inquiries = await inquiryService.getAllInquiries();
     return res.status(200).json(inquiries);
@@ -64,14 +44,14 @@ async function getAllInquiries(req, res) {
     console.error(err);
     return res.status(500).json({ message: 'Server error while fetching inquiries' });
   }
-}
+};
 
-async function getInquiryByNumber(req, res) {
+const getInquiryByNumber = async (req, res) => {
   try {
     const { inquiryNumber } = req.params;
     const inquiry = await inquiryService.getInquiryByNumber(inquiryNumber);
 
-    // Authorization: only teacher or owner student
+    // Authorization: only teacher or the student who created it
     if (
       req.user.role.toLowerCase() !== 'teacher' &&
       inquiry.userId.toString() !== req.user.id
@@ -87,7 +67,7 @@ async function getInquiryByNumber(req, res) {
     }
     return res.status(500).json({ message: 'Server error while fetching inquiry' });
   }
-}
+};
 
 module.exports = {
   createInquiry,

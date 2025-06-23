@@ -25,6 +25,9 @@ const findAll = async (filter = {}) => {
   return await Lesson.find(filter).populate('createdBy', 'name');
 };
 
+
+
+
 module.exports = {
   createLesson,
   findById,

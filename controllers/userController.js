@@ -1,4 +1,7 @@
 const userService = require('../services/userService');
+const userRepository = require('../repository/userRepository');
+
+
 
 // GET: Fetch user profile
 const getProfile = async (req, res) => {
@@ -93,7 +96,15 @@ const getAllStudents = async (req, res) => {
   }
 };
 
-
+const deleteStudentById = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    await userService.deleteStudentById(studentId);
+    res.status(200).json({ message: 'Student deleted successfully (hard delete).' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 module.exports = {
   getProfile,
@@ -101,5 +112,6 @@ module.exports = {
   deleteProfile,
   uploadOrEditTeacherProfile,
   getTeacherCurrentPassword,
-  getAllStudents
+  getAllStudents,
+  deleteStudentById
 };
