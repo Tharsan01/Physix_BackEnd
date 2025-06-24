@@ -83,6 +83,16 @@ const deleteStudentById = async (studentId) => {
   // Perform HARD DELETE
   await userRepository.deleteById(studentId);
 };
+const getStudentProfileById = async (studentId) => {
+  const student = await userRepository.getById(studentId);
+  if (!student) {
+    throw new Error('Student not found.');
+  }
+  if (student.role !== 'student') {
+    throw new Error('The specified user is not a student.');
+  }
+  return toUserDTO(student);
+};
 
 module.exports = {
   getUserProfile,
@@ -90,5 +100,6 @@ module.exports = {
   deleteUser,
   getTeacherData,
   getAllStudents,
-  deleteStudentById
+  deleteStudentById,
+  getStudentProfileById
 };

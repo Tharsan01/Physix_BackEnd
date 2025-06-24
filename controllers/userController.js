@@ -105,6 +105,15 @@ const deleteStudentById = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+const getStudentProfileById = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    const studentProfile = await userService.getStudentProfileById(studentId);
+    res.status(200).json(studentProfile);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 module.exports = {
   getProfile,
@@ -113,5 +122,6 @@ module.exports = {
   uploadOrEditTeacherProfile,
   getTeacherCurrentPassword,
   getAllStudents,
-  deleteStudentById
+  deleteStudentById,
+  getStudentProfileById
 };
