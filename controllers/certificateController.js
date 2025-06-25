@@ -64,8 +64,8 @@ const deleteCertificate = async (req, res) => {
 
 const viewCertificatesByStudent = async (req, res) => {
   try {
-    const batchNumber = req.user.batchNumber;
-    const certificates = await certificateService.getCertificatesByBatchNumber(batchNumber);
+    const studentId = req.user.id; // use the ID from token
+    const certificates = await certificateService.getCertificatesByStudentId(studentId);
     res.json({ success: true, data: certificates });
   } catch (err) {
     console.error('View certificates by student error:', err);
