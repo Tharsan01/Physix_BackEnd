@@ -71,7 +71,7 @@ const getAllStudents = async () => {
 };
 
 const deleteStudentById = async (studentId) => {
-  // Ensure student exists and role is 'student'
+  // Check if student exists and is a student
   const student = await userRepository.getById(studentId);
   if (!student) {
     throw new Error('Student not found.');
@@ -80,7 +80,8 @@ const deleteStudentById = async (studentId) => {
     throw new Error('The specified user is not a student.');
   }
 
-  
+  // Perform HARD DELETE
+  await userRepository.deleteById(studentId);
 };
 
 module.exports = {

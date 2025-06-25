@@ -16,6 +16,7 @@ router.get('/teacher/all', authenticate, restrictTo('teacher'), lessonController
 // Routes accessible by both teachers and students
 router.get('/all', authenticate, lessonController.getAllLessons);
 router.get('/id/:id', authenticate, lessonController.getLessonById);
+router.get('/by-type', authenticate, lessonController.getLessonsByType);
 
 
 
