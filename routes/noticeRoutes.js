@@ -10,6 +10,6 @@ router.delete('/delete/:id', authenticate, restrictTo('teacher'), noticeControll
 router.get('/all', authenticate, restrictTo('teacher'), noticeController.getAllNotices);
 
 // Student route — no auth or add auth if you want students to be authenticated too
-router.get('/published',authenticate, noticeController.getPublishedNotices);
+router.get('/published', authenticate,  restrictTo('student'),   noticeController.getPublishedNotices);
 
 module.exports = router;

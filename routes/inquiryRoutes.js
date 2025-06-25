@@ -11,7 +11,8 @@ router.post('/create', authenticate, restrictTo('Student'), inquiryController.cr
 router.post('/reply', authenticate, restrictTo('Teacher'), inquiryController.replyToInquiry);
 
 // Teacher views all inquiries
-router.get('/', authenticate, restrictTo('Teacher'), inquiryController.getAllInquiries);
+router.get('/', authenticate, restrictTo('Teacher', 'Student'), inquiryController.getAllInquiries);
+
 
 // Get specific inquiry by inquiryNumber (teacher or student owner)
 router.get('/:inquiryNumber', authenticate, inquiryController.getInquiryByNumber);

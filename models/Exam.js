@@ -18,7 +18,7 @@ const examSchema = new mongoose.Schema({
   date: { type: Date, required: true },
   duration: { type: Number, required: true }, // in minutes
   batchNumber: { type: String, required: true },
-  status: { type: String, enum: ['draft', 'published'], default: 'draft' },
+  status: { type: String, enum: ['draft', 'published'], default: 'published' },
   questions: [questionSchema],
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // teacher ID
 }, {
