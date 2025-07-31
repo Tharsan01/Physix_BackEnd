@@ -67,12 +67,11 @@ const registerUser = async ({ userName, email, password, classId, phone, batchNu
   // Save the user with OTP
   await newUser.save();
 
-  // Send OTP email
-  await sendOTPEmail(email, otp);
+
 
   return {
     user: toUserDTO(newUser),
-    message: 'User registered. Please verify your email using the OTP sent to your inbox.',
+    message: 'User registered. ',
   };
 };
 
