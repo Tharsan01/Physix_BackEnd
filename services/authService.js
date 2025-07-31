@@ -11,11 +11,14 @@ const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString()
 const sendOTPEmail = async (email, otp) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
-    secure: true,
+    port: 587, // Use TLS
+      secure: false,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
+    debug: true, // Enable debug logs
+      logger: true,
   });
 
   const mailOptions = {
@@ -59,11 +62,7 @@ const registerUser = async ({ userName, email, password, classId, phone, batchNu
     batchNumber,
   });
 
-  // Generate OTP and set verification fields
-  const otp = generateOTP();
-  newUser.emailOTP = otp;
-  newUser.emailOTPExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 min expiry
-  newUser.emailVerified = false;
+  newUser.emailVerified = true;
 
   // Save the user with OTP
   await newUser.save();
