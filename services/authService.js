@@ -1,15 +1,17 @@
+// 
+
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const userRepository = require('../repository/authRepository');
 const { toUserDTO } = require('../dtos/userDTO');
 
-// ✅ Generate 6-digit OTP
+// ✅ Generate 6-digit OTP (keeping for potential future use)
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-// ✅ Send OTP email function
+// ✅ Send OTP email function (keeping for potential future use)
 const sendOTPEmail = async (email, otp) => {
-  const transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransporter({
     service: 'gmail',
     auth: {
       user: process.env.EMAIL_USER,
@@ -40,14 +42,14 @@ const generateToken = (user) => {
   );
 };
 
-// ✅ Register user (role = student)
+// ✅ Register user (role = student) - NO EMAIL VERIFICATION REQUIRED
 const registerUser = async ({ userName, email, password, classId, phone, batchNumber }) => {
   const existingUser = await userRepository.findByEmail(email);
   if (existingUser) throw new Error('User already exists');
 
   const role = 'student';
 
-  // Create new user object
+  // Create new user object with email already verified
   const newUser = await userRepository.createUser({
     userName,
     email,
@@ -56,27 +58,19 @@ const registerUser = async ({ userName, email, password, classId, phone, batchNu
     phone,
     role,
     batchNumber,
+    emailVerified: true, // Set to true by default - no verification needed
   });
 
-  // Generate OTP and set verification fields
-  const otp = generateOTP();
-  newUser.emailOTP = otp;
-  newUser.emailOTPExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 min expiry
-  newUser.emailVerified = false;
-
-  // Save the user with OTP
+  // Save the user without OTP fields
   await newUser.save();
-
-  // Send OTP email
-  await sendOTPEmail(email, otp);
 
   return {
     user: toUserDTO(newUser),
-    message: 'User registered. Please verify your email using the OTP sent to your inbox.',
+    message: 'User registered successfully. You can now log in.',
   };
 };
 
-// ✅ Verify email OTP
+// ✅ Verify email OTP (keeping for backward compatibility, but not required)
 const verifyEmailOTP = async (email, otp) => {
   const user = await userRepository.findByEmail(email);
   if (!user) throw new Error('User not found');
@@ -93,12 +87,12 @@ const verifyEmailOTP = async (email, otp) => {
   return { message: 'Email successfully verified.' };
 };
 
-// ✅ Login user (by userName and password)
+// ✅ Login user (by userName and password) - NO EMAIL VERIFICATION CHECK
 const loginUser = async ({ userName, password }) => {
   const user = await userRepository.findByUserName(userName);
   if (!user) throw new Error('User not found');
 
-  if (!user.emailVerified) throw new Error('Please verify your email before logging in.');
+  // Removed email verification check - users can login immediately after registration
 
   const isValid = await user.comparePassword(password);
   if (!isValid) throw new Error('Invalid credentials');
@@ -109,7 +103,7 @@ const loginUser = async ({ userName, password }) => {
 
 // ✅ Send password reset email
 const sendResetPasswordEmail = async (email, token) => {
-  const transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransporter({
     service: 'gmail',
     auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
   });
