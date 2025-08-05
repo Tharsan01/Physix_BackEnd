@@ -4,6 +4,6 @@ const topicController = require('../controllers/topicController');
 const { authenticate, restrictTo } = require('../middleware/authMiddleware');
 
 router.post('/', authenticate, restrictTo('Teacher'), topicController.addTopic);
-router.get('/', authenticate, restrictTo('Teacher'), topicController.getAllTopics);
+router.get('/', authenticate, restrictTo('Teacher', 'student'), topicController.getAllTopics);
 
 module.exports = router;

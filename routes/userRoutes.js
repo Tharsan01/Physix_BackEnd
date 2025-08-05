@@ -19,6 +19,6 @@ router.get('/students', authenticate,restrictTo('teacher'), userController.getAl
 // Only accessible to teacher
 router.delete('/students/:id', authenticate, restrictTo('teacher'), userController.deleteStudentById);
 
-router.get('/students/:id', authenticate, restrictTo('teacher'), userController.getStudentProfileById);
+router.get('/students/:id', authenticate, restrictTo('student'), userController.getStudentProfileById);
 
 module.exports = router;

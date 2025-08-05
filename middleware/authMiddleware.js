@@ -11,13 +11,15 @@ const authenticate = (req, res, next) => {
     const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (!decoded.batchNumber) {
-      return res.status(403).json({ message: 'Forbidden: Batch number missing in token' });
+    // For students, batchNumber is required
+    if (decoded.role.toLowerCase() === 'student' && !decoded.batchNumber) {
+      return res.status(403).json({ message: 'Forbidden: Batch number required for students' });
     }
 
     req.user = {
       id: decoded.id,
       role: decoded.role,
+      // Include batchNumber if it exists, otherwise it will be undefined
       batchNumber: decoded.batchNumber,
     };
 
@@ -26,7 +28,6 @@ const authenticate = (req, res, next) => {
     return res.status(403).json({ message: 'Forbidden: Invalid or expired token' });
   }
 };
-
 const restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!req.user || !req.user.role) {
